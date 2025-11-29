@@ -48,4 +48,14 @@ public class PieceController
         selectedPathIndex = null;
         return result;
     }
+
+    public void UseBirdCard(BirdCard card, int playerId)
+    {
+        boardConductor.ApplyCard(card, playerId);
+    }
+
+    public void UseTotemCard(Card card)
+    {
+        // TODO
+    }
 }

@@ -43,10 +43,11 @@ public class BoardGraph : MonoBehaviour
     private readonly Dictionary<string, CapsuleCollider> fieldDictionary = new();
     private ReadOnlyDictionary<string, List<Piece>> PiecesAtFields => new(Pieces.DistinctBy(x => x.Position).Select(x => new KeyValuePair<string, List<Piece>>(x.Position, Pieces.Where(y => y.Position == x.Position).ToList())).ToDictionary(x => x.Key, x => x.Value));
     public List<Piece> Pieces { get; } = new();
+    public static int NumberOfPieces = -1;
 
     [SerializeField] private Transform fields;
 
-    private void Start()
+    private void Awake()
     {
         for (int i = 0; i < fields.childCount; i++)
         {
@@ -119,6 +120,7 @@ public class BoardGraph : MonoBehaviour
         piece.BoardGraph = this;
         Pieces.Add(piece);
         MovePieceInstantlyTo(piece, "START");
+        NumberOfPieces = Pieces.Count;
     }
 
     private bool DoesFieldExist(string field)

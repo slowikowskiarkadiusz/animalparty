@@ -12,7 +12,9 @@ public class BoardConductor : MonoBehaviour
     private BoardGraph boardGraph;
     private readonly List<PieceController> pieceControllers = new();
 
-    private void Start()
+    public List<(BirdCard card, int turnsLeft)>[] appliedBirdCards;
+
+    private void Awake()
     {
         StartCoroutine(Game());
     }
@@ -36,9 +38,11 @@ public class BoardConductor : MonoBehaviour
     private IEnumerator BeginGame()
     {
         boardGraph = GetComponent<BoardGraph>();
+        appliedBirdCards = new List<(BirdCard, int)>[noOfPlayersToSpawn];
 
         for (int i = 0; i < noOfPlayersToSpawn; i++)
         {
+            appliedBirdCards[i] = new();
             boardGraph.AddPiece(Instantiate(piecePrefab, boardGraph.transform));
             pieceControllers.Add(new PieceController(i, this, boardGraph.Pieces[i]));
         }
@@ -72,6 +76,12 @@ public class BoardConductor : MonoBehaviour
 
             yield return boardGraph.MovePieceForward(playerId, 0);
         }
+    }
+
+    public void ApplyCard(BirdCard card, int playerId)
+    {
+        if (card.Turns.HasValue)
+            appliedBirdCards[playerId].Add((card, card.Turns.Value));
     }
 
     private void SwitchToPlayer(int playerId)
