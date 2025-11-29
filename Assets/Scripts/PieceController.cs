@@ -1,4 +1,5 @@
-using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 public class PieceController
 {
@@ -9,6 +10,8 @@ public class PieceController
     private BoardConductor boardConductor;
     private Piece piece;
     private int selectedDiceIndex = 0;
+
+    public List<Card> PiecesCards => piece.Cards ?? Enumerable.Empty<Card>().ToList();
 
     public PieceController(int id, BoardConductor boardConductor, Piece piece)
     {
