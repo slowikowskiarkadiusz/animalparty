@@ -24,7 +24,6 @@ public class PieceController
 
     public void RollDice()
     {
-        Debug.Log("Rolling the dice.");
         diceRoll = piece.Dices[selectedDiceIndex].Roll();
     }
 

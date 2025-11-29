@@ -19,21 +19,18 @@ public class BoardConductor : MonoBehaviour
 
     private IEnumerator Game()
     {
-        Debug.Log("Beggining the game.");
         yield return BeginGame();
 
         while (true)
         {
             for (int i = 0; i < boardGraph.Pieces.Count; i++)
             {
-                Debug.Log($"Switching to player {i}.");
                 SwitchToPlayer(i);
-                Debug.Log($"Waiting for the player {i}'s turn.");
                 yield return PlayersTurn(i);
             }
-        }
 
-        yield return 0;
+            yield return 0;
+        }
     }
 
     private IEnumerator BeginGame()
@@ -53,8 +50,6 @@ public class BoardConductor : MonoBehaviour
     {
         var controller = pieceControllers[playerId];
 
-        Debug.Log($"Waiting for the dice roll.");
-
         int? diceRoll;
 
         while (!(diceRoll = controller.PopDiceRoll()).HasValue)
@@ -62,14 +57,13 @@ public class BoardConductor : MonoBehaviour
 
         while (diceRoll-- > 0)
         {
-            Debug.Log($"{diceRoll + 1} left of the dice");
-            if (boardGraph.IsForkAheadOfPiece(playerId))
+            if (boardGraph.IsForkAheadOfPiece(playerId, out var fieldsAhead))
             {
-                playerUiController.ShowPathSelectionMenu();
+                playerUiController.ShowPathSelectionMenu(fieldsAhead);
 
-                var selectedPathIndex = controller.PopSelectedPathIndex();
+                int? selectedPathIndex;
 
-                while (!selectedPathIndex.HasValue)
+                while (!(selectedPathIndex = controller.PopSelectedPathIndex()).HasValue)
                     yield return 0;
 
                 var selectedPath = selectedPathIndex.Value;

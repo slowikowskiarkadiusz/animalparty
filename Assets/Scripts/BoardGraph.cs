@@ -25,7 +25,7 @@ public class BoardGraph : MonoBehaviour
         {"AJ", new []{"AK"}},
         {"AK", new []{"AL"}},
         {"AL", new []{"AM"}},
-        {"AM", new []{"AN"}},
+        {"AM", new []{"AR"}},
         {"AN", new []{"AO"}},
         {"AO", new []{"AP"}},
         {"AP", new []{"AR"}},
@@ -79,7 +79,6 @@ public class BoardGraph : MonoBehaviour
         var field = graph[Pieces[pieceId].Position][selectedPath];
         Pieces[pieceId].Position = field;
         var positions = GetPiecesLocalPositionsAtField(field);
-        Debug.Log($"MovePieceForward {pieceId} {field}");
 
         while (timer < movingPieceTime)
         {
@@ -127,8 +126,10 @@ public class BoardGraph : MonoBehaviour
         return graph.TryGetValue(field, out _);
     }
 
-    public bool IsForkAheadOfPiece(int pieceId)
+    public bool IsForkAheadOfPiece(int pieceId, out Transform[] fieldsAhead)
     {
-        return graph[Pieces[pieceId].Position].Skip(1).Any();
+        var result = graph[Pieces[pieceId].Position].Skip(1).Any();
+        fieldsAhead = graph[Pieces[pieceId].Position].Select(x => fieldDictionary[x].transform).ToArray();
+        return result;
     }
 }
