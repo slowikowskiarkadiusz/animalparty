@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4282887561741163323}
   - component: {fileID: 2108630092063821915}
   - component: {fileID: 6196907261256471381}
+  - component: {fileID: -3825781893677248598}
   m_Layer: 5
   m_Name: Card Target Selection Item Button
   m_TagString: Untagged
@@ -199,6 +200,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &-3825781893677248598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773034524242267543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb44087f342fc4b779f08572ada1e5f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloatUI
 --- !u!1 &5377567767422918499
 GameObject:
   m_ObjectHideFlags: 0

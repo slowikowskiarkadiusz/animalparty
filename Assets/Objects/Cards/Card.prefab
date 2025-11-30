@@ -154,6 +154,7 @@ GameObject:
   - component: {fileID: 4535059269825482069}
   - component: {fileID: 619809194118628312}
   - component: {fileID: 4006902760367294764}
+  - component: {fileID: 405765355144139073}
   m_Layer: 5
   m_Name: Card
   m_TagString: Untagged
@@ -351,3 +352,15 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &405765355144139073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9211298575433151950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb44087f342fc4b779f08572ada1e5f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloatUI

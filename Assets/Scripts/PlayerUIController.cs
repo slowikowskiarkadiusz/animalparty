@@ -69,16 +69,30 @@ public class PlayerUIController : MonoBehaviour
             return;
 
         cardMenu.gameObject.SetActive(active);
-        var width = cardMenu.sizeDelta.x;
 
-        var count = currentPieceController.PiecesCards.Count;
-        for (int i = 0; i < count; i++)
+        if (active)
         {
-            var card = Instantiate(cardPrefab, cardMenu.transform);
-            var offset = ((i + 1f) / (count + 1f) * width) - (width / 2f);
-            card.transform.localPosition = new Vector3(offset, 0, 0);
+            var width = cardMenu.sizeDelta.x;
 
-            card.GetComponent<Button>().onClick.AddListener(() => StartCoroutine(UseBirdCard(card)));
+            var count = currentPieceController.PiecesCards.Count;
+            for (int i = 0; i < count; i++)
+            {
+                var card = Instantiate(cardPrefab, cardMenu);
+                var offset = ((i + 1f) / (count + 1f) * width) - (width / 2f);
+                card.transform.localPosition = new Vector3(offset, 0, 0);
+                card.GetComponent<Button>().onClick.AddListener(() => StartCoroutine(UseBirdCard(card)));
+
+                var cardFloat = card.GetComponent<FloatUI>();
+                if (cardFloat)
+                    cardFloat.Offset = (float)i / count;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < cardMenu.childCount; i++)
+            {
+                DestroyImmediate(cardMenu.GetChild(i).gameObject);
+            }
         }
     }
 
@@ -113,6 +127,10 @@ public class PlayerUIController : MonoBehaviour
             item.transform.localPosition = offset * Vector3.right;
             var playerId = i;
             item.onClick.AddListener(() => cardTargetPlayerId = playerId);
+
+            var itemFloat = item.GetComponent<FloatUI>();
+            if (itemFloat)
+                itemFloat.Offset = (float)i / BoardGraph.NumberOfPieces;
         }
     }
 }
