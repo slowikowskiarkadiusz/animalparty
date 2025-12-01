@@ -24,7 +24,7 @@ public class SelectableItemUI : MonoBehaviour
     private EventTrigger _eventTrigger;
     private EventTrigger EventTrigger { get => _eventTrigger ??= GetComponent<EventTrigger>(); }
 
-    private int originalChildIndex = -1;
+    private int? originalChildIndex;
     private Vector3 targetScale = Vector3.one;
 
     public float scalingSpeed = 5;
@@ -32,7 +32,6 @@ public class SelectableItemUI : MonoBehaviour
     private void Awake()
     {
         SetupPointerInteraction();
-        originalChildIndex = transform.GetSiblingIndex();
         instances.Add(this);
     }
 
@@ -98,6 +97,7 @@ public class SelectableItemUI : MonoBehaviour
         {
             if (instance == this)
             {
+                originalChildIndex = transform.GetSiblingIndex();
                 transform.SetSiblingIndex(transform.parent.childCount - 1);
                 targetScale = Vector3.one * 1.2f;
                 Outline.enabled = true;
@@ -111,7 +111,8 @@ public class SelectableItemUI : MonoBehaviour
 
     public void OnPointerExit()
     {
-        transform.SetSiblingIndex(originalChildIndex);
+        originalChildIndex ??= transform.GetSiblingIndex();
+        transform.SetSiblingIndex(originalChildIndex.Value);
         targetScale = Vector3.one * 1f;
         Outline.enabled = false;
     }
