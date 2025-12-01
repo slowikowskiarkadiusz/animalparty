@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 public class FloatUI : MonoBehaviour
@@ -9,9 +10,19 @@ public class FloatUI : MonoBehaviour
 
     public float Offset { get; set; }
 
-    private void Start()
+    private Vector3? originalPosition;
+    private Coroutine coroutine;
+
+    public void StartRunning()
     {
-        StartCoroutine(Run());
+        originalPosition = transform.position;
+        coroutine = StartCoroutine(Run());
+    }
+
+    public void ResetPosition()
+    {
+        if (originalPosition.HasValue)
+            transform.position = originalPosition.Value;
     }
 
     private IEnumerator Run()
@@ -34,5 +45,10 @@ public class FloatUI : MonoBehaviour
             }
             timer = 0f;
         } while (true);
+    }
+
+    public void StopRunning()
+    {
+        StopCoroutine(coroutine);
     }
 }

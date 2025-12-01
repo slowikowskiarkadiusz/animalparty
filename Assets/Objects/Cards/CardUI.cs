@@ -2,8 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Outline))]
-public class CardUI : MonoBehaviour
+public class CardUI : SelectableItemUI
 {
     public Card Card { get; set; } = BirdCard.Magpie;
     [SerializeField] private TextMeshProUGUI text;

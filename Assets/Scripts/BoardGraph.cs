@@ -47,7 +47,7 @@ public class BoardGraph : MonoBehaviour
 
     [SerializeField] private Transform fields;
 
-    private void Awake()
+    public void Init()
     {
         for (int i = 0; i < fields.childCount; i++)
         {
@@ -89,6 +89,13 @@ public class BoardGraph : MonoBehaviour
         }
 
         Pieces[pieceId].transform.position = positions.Last();
+    }
+
+    public IEnumerator RunFieldsEvent(PieceController pieceController, PlayerUIController playerUiController)
+    {
+        var eventField = fieldDictionary[pieceController.PiecesPosition].GetComponent<EventField>();
+        if (eventField)
+            yield return eventField.Execute(pieceController, playerUiController);
     }
 
     public int GetNumberOfPiecesAtField(string field)

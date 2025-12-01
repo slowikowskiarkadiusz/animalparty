@@ -29,7 +29,7 @@ public record BirdCard : Card
         Turns = turns;
     }
 
-    public static BirdCard Magpie = new("Magpie", "Get coins equal to the sum of other players' coins", CardType.Bird, CardQuality.Common, true);
+    public static BirdCard Magpie => new("Magpie", "Get coins equal to the sum of other players' coins", CardType.Bird, CardQuality.Common, true);
 }
 
 public record TotemCard : Card
@@ -38,7 +38,7 @@ public record TotemCard : Card
 
     public TotemCard(string name, string description, CardType type, CardQuality quality) : base(name, description, type, quality) { }
 
-    public static TotemCard PerpetualVelocity = new("Totem of Perpetual Velocity", "Doubles dice rolls for each player", CardType.Totem, CardQuality.Common);
+    public static TotemCard PerpetualVelocity => new("Totem of Perpetual Velocity", "Doubles dice rolls for each player", CardType.Totem, CardQuality.Common);
 }
 
 public enum CardType

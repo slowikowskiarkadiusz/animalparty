@@ -38,6 +38,7 @@ public class BoardConductor : MonoBehaviour
     private IEnumerator BeginGame()
     {
         boardGraph = GetComponent<BoardGraph>();
+        boardGraph.Init();
         appliedBirdCards = new List<(BirdCard, int)>[noOfPlayersToSpawn];
 
         for (int i = 0; i < noOfPlayersToSpawn; i++)
@@ -76,6 +77,8 @@ public class BoardConductor : MonoBehaviour
 
             yield return boardGraph.MovePieceForward(playerId, 0);
         }
+
+        yield return boardGraph.RunFieldsEvent(controller, playerUiController);
     }
 
     public void ApplyCard(BirdCard card, int playerId)

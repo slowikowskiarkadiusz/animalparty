@@ -12,6 +12,7 @@ public class PieceController
     private int selectedDiceIndex = 0;
 
     public List<Card> PiecesCards => piece.Cards ?? Enumerable.Empty<Card>().ToList();
+    public string PiecesPosition => piece.Position;
 
     public PieceController(int id, BoardConductor boardConductor, Piece piece)
     {
@@ -51,6 +52,7 @@ public class PieceController
 
     public void UseBirdCard(BirdCard card, int playerId)
     {
+        piece.Cards.Remove(card);
         boardConductor.ApplyCard(card, playerId);
     }
 
