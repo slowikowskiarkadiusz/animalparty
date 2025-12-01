@@ -24,7 +24,7 @@ public class ShopEventField : EventField
 
     private IEnumerator OnCardSelected(CardUI card, PieceController pieceController, PlayerUIController playerUiController)
     {
-        yield return UIAnimations.SelectingUIItem(card);
+        yield return card.RunSelectingAnimation();
 
         pieceController.PiecesCards.Add(card.Card);
         canYield = true;

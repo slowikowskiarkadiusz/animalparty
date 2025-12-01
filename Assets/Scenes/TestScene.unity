@@ -2524,6 +2524,7 @@ MonoBehaviour:
   cardMenu: {fileID: 723328614}
   cardPrefab: {fileID: 6596698336960315855, guid: b74dfa1d25b3548cfbe4a9328e7ca0d4, type: 3}
   cardTargetSelectionMenuItemPrefab: {fileID: 4954544216021349751, guid: f4004e7b15ae7470eb0ccbd39bac6335, type: 3}
+  cardTargetSelectionMenuRandomItemPrefab: {fileID: 6831938546242114569, guid: 7e959489f89bc4e66b41912d129b65f0, type: 3}
 --- !u!1 &1265943005
 GameObject:
   m_ObjectHideFlags: 0

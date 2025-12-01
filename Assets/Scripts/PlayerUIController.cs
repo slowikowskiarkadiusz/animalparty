@@ -15,6 +15,7 @@ public class PlayerUIController : MonoBehaviour
     [SerializeField] private RectTransform cardMenu;
     [SerializeField] private CardUI cardPrefab;
     [SerializeField] private SelectableItemUI cardTargetSelectionMenuItemPrefab;
+    [SerializeField] private SelectableItemUI cardTargetSelectionMenuRandomItemPrefab;
 
     private Camera mainCamera;
     private List<Button> pathSelectionButtons = new();
@@ -124,7 +125,7 @@ public class PlayerUIController : MonoBehaviour
     {
         var birdCard = cardUI.Card as BirdCard;
 
-        yield return UIAnimations.SelectingUIItem(cardUI);
+        yield return cardUI.RunSelectingAnimation();
 
         if (birdCard.RequriesTarget)
         {
@@ -138,7 +139,7 @@ public class PlayerUIController : MonoBehaviour
 
         if (birdCard.RequriesTarget)
         {
-            yield return UIAnimations.SelectingUIItem(cardTargetPlayer.Value.selectable);
+            yield return cardTargetPlayer.Value.selectable.RunSelectingAnimation();
             HideSelectables();
             SetCardMenuActive(true);
         }
@@ -147,34 +148,47 @@ public class PlayerUIController : MonoBehaviour
         yield return 0;
     }
 
-    // private void PrepareCardTargetSelectionMenu()
-    // {
-    //     for (int i = 0; i < BoardGraph.NumberOfPieces; i++)
-    //     {
-    //         var item = Instantiate(cardTargetSelectionMenuItemPrefab, cardTargetSelectionMenu);
-    //         var offset = ((i + 1f) / (BoardGraph.NumberOfPieces + 1f) * cardTargetSelectionMenu.sizeDelta.x) - (cardTargetSelectionMenu.sizeDelta.x / 2f);
-    //         item.transform.localPosition = offset * Vector3.right;
-    //         var playerId = i;
-    //         item.onClick.AddListener(() => cardTargetPlayerId = playerId);
-
-    //         var itemFloat = item.GetComponent<FloatUI>();
-    //         if (itemFloat)
-    //             itemFloat.Offset = (float)i / BoardGraph.NumberOfPieces;
-    //     }
-    // }
-
     private IEnumerable<SelectableItemUI> GenerateCardTargetSelectionCollection()
     {
         var result = new List<SelectableItemUI>();
-        for (int i = 0; i < BoardGraph.NumberOfPieces; i++)
+        SelectableItemUI randomItem = null;
+        for (int i = 0; i < BoardGraph.NumberOfPieces + 1; i++)
         {
-            var item = Instantiate(cardTargetSelectionMenuItemPrefab, cardMenu);
-            var playerId = i;
-            item.Button.onClick.AddListener(() => cardTargetPlayer = (playerId, item));
-
-            result.Add(item);
+            SelectableItemUI item;
+            if (i != BoardGraph.NumberOfPieces)
+            {
+                item = Instantiate(cardTargetSelectionMenuItemPrefab, cardMenu);
+                var playerId = i;
+                item.Button.onClick.AddListener(() => cardTargetPlayer = (playerId, item));
+                result.Add(item);
+            }
+            else
+            {
+                randomItem = Instantiate(cardTargetSelectionMenuRandomItemPrefab, cardMenu);
+                randomItem.Button.onClick.AddListener(() => StartCoroutine(RandomizeCardTargetSelection(result)));
+            }
         }
 
-        return result;
+        return result.Append(randomItem);
+    }
+
+    private IEnumerator RandomizeCardTargetSelection(List<SelectableItemUI> selectables)
+    {
+        SelectableItemUI.CanInteract(false);
+        var ticks = 50 + UnityEngine.Random.Range(0, BoardGraph.NumberOfPieces);
+        int currentSelectableId = 0;
+
+        while (ticks-- >= 0)
+        {
+            currentSelectableId++;
+            currentSelectableId %= selectables.Count;
+            selectables[currentSelectableId].OnPointerEnter();
+            yield return new WaitForSeconds(0.1f * (ticks < 10 ? 10 - ticks : 1));
+        }
+
+        yield return new WaitForSeconds(1);
+
+        cardTargetPlayer = (currentSelectableId, selectables[currentSelectableId]);
+        SelectableItemUI.CanInteract(true);
     }
 }
