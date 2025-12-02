@@ -12,13 +12,14 @@ public enum Axis
 public class Float : MonoBehaviour
 {
     public float Offset { get; set; }
+    public float MaxDistance => maxDistance;
 
     [SerializeField] private float maxDistance = 10f;
     [SerializeField] private float dirChangeTime = 1.5f;
     [SerializeField] private List<Axis> axes = new();
     [SerializeField] private bool runOnStart = false;
     private Vector3? originalPosition;
-    private List<Coroutine> coroutines;
+    private List<Coroutine> coroutines = new();
 
     private void Start()
     {

@@ -40,13 +40,24 @@ public class BoardGraph : MonoBehaviour
         {"BA", new []{"AA"}},
     };
 
+    private readonly Dictionary<string, FieldEvent> fieldEvents = new()
+    {
+        {"AJ", new VendorEventField()},
+    };
+
+    private readonly Dictionary<string[], FieldEvent> interfieldEvents = new()
+    {
+        {new []{"AO", "AP"}, new VendorEventField()},
+    };
+
     private readonly Dictionary<string, CapsuleCollider> fieldDictionary = new();
     private ReadOnlyDictionary<string, List<Piece>> PiecesAtFields => new(Pieces.DistinctBy(x => x.Position).Select(x => new KeyValuePair<string, List<Piece>>(x.Position, Pieces.Where(y => y.Position == x.Position).ToList())).ToDictionary(x => x.Key, x => x.Value));
     public List<Piece> Pieces { get; } = new();
     public static int NumberOfPieces = -1;
 
     [SerializeField] private Transform fields;
-    [SerializeField] private Transform exclamationPointPrefab;
+    [SerializeField] private Float exclamationPointPrefab;
+    [SerializeField] private Material fieldEventMaterial;
 
     public void Init()
     {
@@ -54,6 +65,19 @@ public class BoardGraph : MonoBehaviour
         {
             var child = fields.GetChild(i);
             fieldDictionary[child.name] = child.GetComponent<CapsuleCollider>();
+
+            if (fieldEvents.TryGetValue(child.name, out _))
+                child.GetComponent<MeshRenderer>().material = fieldEventMaterial;
+        }
+
+        foreach (KeyValuePair<string[], FieldEvent> pair in interfieldEvents)
+        {
+            var field1 = fieldDictionary[pair.Key[0]];
+            var field2 = fieldDictionary[pair.Key[1]];
+
+            var exclamationPoint = Instantiate(exclamationPointPrefab, transform);
+            exclamationPoint.transform.position = (field1.transform.position + field2.transform.position) / 2;
+            exclamationPoint.transform.position = exclamationPoint.transform.position + Vector3.up * exclamationPoint.MaxDistance / 2;
         }
     }
 
@@ -94,9 +118,7 @@ public class BoardGraph : MonoBehaviour
 
     public IEnumerator RunFieldsEvent(PieceController pieceController, PlayerUIController playerUiController)
     {
-        var eventField = fieldDictionary[pieceController.PiecesPosition].GetComponent<EventField>();
-        if (eventField)
-            yield return eventField.Execute(pieceController, playerUiController);
+        yield return fieldEvents[pieceController.PiecesPosition]?.Execute(pieceController, playerUiController);
     }
 
     public int GetNumberOfPiecesAtField(string field)

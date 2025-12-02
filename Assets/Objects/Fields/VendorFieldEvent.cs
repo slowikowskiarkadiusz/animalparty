@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using UnityEngine;
 
-public class ShopEventField : EventField
+public class VendorEventField : FieldEvent
 {
     // the offer has to be somehow generated. idk if has to be deplatable
     private List<Card> offer = new() { TotemCard.PerpetualVelocity, TotemCard.PerpetualVelocity, TotemCard.PerpetualVelocity, TotemCard.PerpetualVelocity };
@@ -13,7 +11,7 @@ public class ShopEventField : EventField
     {
         playerUiController.ShowCards(offer, card =>
         {
-            StartCoroutine(OnCardSelected(card, pieceController, playerUiController));
+            playerUiController.StartCoroutine(OnCardSelected(card, pieceController, playerUiController));
         });
 
         // here can be like animations, camera zooming and such
