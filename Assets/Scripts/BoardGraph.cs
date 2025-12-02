@@ -46,6 +46,7 @@ public class BoardGraph : MonoBehaviour
     public static int NumberOfPieces = -1;
 
     [SerializeField] private Transform fields;
+    [SerializeField] private Transform exclamationPointPrefab;
 
     public void Init()
     {

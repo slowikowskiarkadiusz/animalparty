@@ -11,6 +11,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(EventTrigger))]
 public class SelectableItemUI : MonoBehaviour
 {
+    private const float scalingSpeed = 5;
     private static List<SelectableItemUI> instances = new();
 
     private FloatUI _float;
@@ -24,10 +25,10 @@ public class SelectableItemUI : MonoBehaviour
     private EventTrigger _eventTrigger;
     private EventTrigger EventTrigger { get => _eventTrigger ??= GetComponent<EventTrigger>(); }
 
+    private Color outlineColor = new(1f, 205f / 255f, 0, 1f);
     private int? originalChildIndex;
     private Vector3 targetScale = Vector3.one;
-
-    public float scalingSpeed = 5;
+    [SerializeField] private float scaleBy = 1.2f;
 
     private void Awake()
     {
@@ -56,6 +57,8 @@ public class SelectableItemUI : MonoBehaviour
 
     private void SetupPointerInteraction()
     {
+        Outline.effectColor = outlineColor;
+
         EventTrigger.Entry pointerEnter = new EventTrigger.Entry();
         pointerEnter.eventID = EventTriggerType.PointerEnter;
         pointerEnter.callback.AddListener((eventData) => OnPointerEnter());
@@ -99,7 +102,7 @@ public class SelectableItemUI : MonoBehaviour
             {
                 originalChildIndex = transform.GetSiblingIndex();
                 transform.SetSiblingIndex(transform.parent.childCount - 1);
-                targetScale = Vector3.one * 1.2f;
+                targetScale = Vector3.one * scaleBy;
                 Outline.enabled = true;
             }
             else

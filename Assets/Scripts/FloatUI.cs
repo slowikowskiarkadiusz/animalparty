@@ -1,10 +1,9 @@
-using System;
 using System.Collections;
-using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 public class FloatUI : MonoBehaviour
 {
+    [SerializeField] private bool isEnabled = true;
     public const float MaxDistance = 5f;
     public const float DirChangeTime = 1.5f;
 
@@ -15,12 +14,14 @@ public class FloatUI : MonoBehaviour
 
     public void StartRunning()
     {
+        if (!isEnabled) return;
         originalPosition = transform.position;
         coroutine = StartCoroutine(Run());
     }
 
     public void ResetPosition()
     {
+        if (!isEnabled) return;
         if (originalPosition.HasValue)
             transform.position = originalPosition.Value;
     }
@@ -49,6 +50,7 @@ public class FloatUI : MonoBehaviour
 
     public void StopRunning()
     {
+        if (!isEnabled) return;
         StopCoroutine(coroutine);
     }
 }
