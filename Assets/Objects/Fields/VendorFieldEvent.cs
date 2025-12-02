@@ -20,7 +20,7 @@ public class VendorEventField : FieldEvent
             yield return 0;
     }
 
-    private IEnumerator OnCardSelected(CardUI card, PieceController pieceController, PlayerUIController playerUiController)
+    private IEnumerator OnCardSelected(CardObject card, PieceController pieceController, PlayerUIController playerUiController)
     {
         yield return card.RunSelectingAnimation();
 

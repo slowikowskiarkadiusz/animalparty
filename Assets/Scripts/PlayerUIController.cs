@@ -13,7 +13,7 @@ public class PlayerUIController : MonoBehaviour
     [SerializeField] private Button rollDiceButton;
     [SerializeField] private Button pathSelectionButtonPrefab;
     [SerializeField] private RectTransform cardMenu;
-    [SerializeField] private CardUI cardPrefab;
+    [SerializeField] private CardObject cardPrefab;
     [SerializeField] private SelectableItemUI cardTargetSelectionMenuItemPrefab;
     [SerializeField] private SelectableItemUI cardTargetSelectionMenuRandomItemPrefab;
 
@@ -91,12 +91,12 @@ public class PlayerUIController : MonoBehaviour
         }
     }
 
-    public void ShowCards(IEnumerable<Card> cards, Action<CardUI> onClick)
+    public void ShowCards(IEnumerable<Card> cards, Action<CardObject> onClick)
     {
         if (cardMenu.gameObject.activeInHierarchy)
             return;
 
-        var cardUIs = new List<CardUI>();
+        var cardUIs = new List<CardObject>();
 
         var count = cards.Count();
         for (int i = 0; i < count; i++)
@@ -121,7 +121,7 @@ public class PlayerUIController : MonoBehaviour
         cardMenu.gameObject.SetActive(false);
     }
 
-    private IEnumerator UseBirdCard(CardUI cardUI)
+    private IEnumerator UseBirdCard(CardObject cardUI)
     {
         var birdCard = cardUI.Card as BirdCard;
 
