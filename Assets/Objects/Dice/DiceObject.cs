@@ -8,8 +8,8 @@ public class DiceObject : MonoBehaviour
 
     private float radius = 2;
     public bool pips = true;
-    // public Dice dice = Dice.Default;
-    public int[] Faces = new[] { 15, 4, 22, 48, 1, 12 };
+    public Dice dice = Dice.Default;
+    // public int[] Faces = new[] { 15, 4, 22, 48, 1, 12 };
 
     readonly Vector3[] dict = new[]
     {
@@ -25,11 +25,12 @@ public class DiceObject : MonoBehaviour
     {
         var sideTransform = new GameObject().transform;
         sideTransform.SetParent(transform);
+        sideTransform.localScale = Vector3.one;
         sideTransform.localPosition = Vector3.zero;
 
-        var sqrt = Mathf.Sqrt(Faces[index]);
+        var sqrt = Mathf.Sqrt(dice.Faces[index]);
         var cols = (int)Mathf.Ceil(sqrt);
-        var perCol = (float)Faces[index] / cols;
+        var perCol = (float)dice.Faces[index] / cols;
         var rest = Mathf.Round((perCol - Mathf.Floor(perCol)) * cols);
 
         var columns = new int[cols];
@@ -79,7 +80,7 @@ public class DiceObject : MonoBehaviour
                 Destroy(transform.GetChild(i).gameObject);
         }
 
-        for (int i = 0; i < Faces.Length; i++)
+        for (int i = 0; i < dice.Faces.Length; i++)
         {
             SpawnSide(i);
         }
