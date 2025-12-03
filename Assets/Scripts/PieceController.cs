@@ -8,17 +8,17 @@ public class PieceController
     private int? selectedPathIndex;
 
     private BoardConductor boardConductor;
-    private Piece piece;
+    public Piece Piece { get; private set; }
     private int selectedDiceIndex = 0;
 
-    public List<Card> PiecesCards => piece.Cards ?? Enumerable.Empty<Card>().ToList();
-    public string PiecesPosition => piece.Position;
+    public List<Card> PiecesCards => Piece.Cards ?? Enumerable.Empty<Card>().ToList();
+    public string PiecesPosition => Piece.Position;
 
     public PieceController(int id, BoardConductor boardConductor, Piece piece)
     {
         Id = id;
         this.boardConductor = boardConductor;
-        this.piece = piece;
+        this.Piece = piece;
     }
 
     public void SetActive(bool v)
@@ -26,9 +26,12 @@ public class PieceController
         // TODO
     }
 
-    public void RollDice()
+    public void RollDice(Dice dice)
     {
-        diceRoll = piece.Dices[selectedDiceIndex].Roll();
+        boardConductor.DiceThrower.ShowDice(Piece, dice);
+        // var dice = Piece.Dices[selectedDiceIndex];
+        // var faceIndex = dice.GetRandomFaceIndex();
+        // diceRoll = dice.Faces[faceIndex];
     }
 
     public void SelectPath(int pathIndex)
@@ -52,7 +55,7 @@ public class PieceController
 
     public void UseBirdCard(BirdCard card, int playerId)
     {
-        piece.Cards.Remove(card);
+        Piece.Cards.Remove(card);
         boardConductor.ApplyCard(card, playerId);
     }
 

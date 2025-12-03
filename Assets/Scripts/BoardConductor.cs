@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoardGraph))]
+[RequireComponent(typeof(DiceThrower))]
 public class BoardConductor : MonoBehaviour
 {
     [SerializeField] private Piece piecePrefab;
@@ -12,10 +13,12 @@ public class BoardConductor : MonoBehaviour
     private BoardGraph boardGraph;
     private readonly List<PieceController> pieceControllers = new();
 
+    public DiceThrower DiceThrower { get; private set; }
     public List<(BirdCard card, int turnsLeft)>[] appliedBirdCards;
 
     private void Awake()
     {
+        DiceThrower = GetComponent<DiceThrower>();
         StartCoroutine(Game());
     }
 

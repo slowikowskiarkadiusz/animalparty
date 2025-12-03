@@ -16,6 +16,8 @@ public class PlayerUIController : MonoBehaviour
     [SerializeField] private CardObject cardPrefab;
     [SerializeField] private SelectableItemUI cardTargetSelectionMenuItemPrefab;
     [SerializeField] private SelectableItemUI cardTargetSelectionMenuRandomItemPrefab;
+    [SerializeField] private RectTransform choosableDicesMenu;
+    [SerializeField] private ChoosableDiceUI choosableDicePrefab;
 
     private Camera mainCamera;
     private List<Button> pathSelectionButtons = new();
@@ -31,12 +33,28 @@ public class PlayerUIController : MonoBehaviour
     {
         rollDiceButton.onClick.RemoveAllListeners();
 
+        Cameraman.FocusOnPieceOnPlayersMove(pieceController.Piece);
+
         currentPieceController = pieceController;
         playerNumberText.text = $"Player {currentPieceController.Id}";
         turnActionsMenu.gameObject.SetActive(true);
         rollDiceButton.onClick.AddListener(() =>
         {
-            currentPieceController.RollDice();
+            choosableDicesMenu.gameObject.SetActive(true);
+            for (int i = 0; i < currentPieceController.Piece.Dices.Length; i++)
+            {
+                Dice dice = currentPieceController.Piece.Dices[i];
+                var item = Instantiate(choosableDicePrefab, choosableDicesMenu);
+                item.Dice = dice;
+                item.transform.localPosition = new Vector3(SpaceAround(i, currentPieceController.Piece.Dices.Length, choosableDicesMenu.sizeDelta.x), 0, 0);
+                item.Button.onClick.AddListener(() =>
+                {
+                    currentPieceController.RollDice(dice);
+                    //TODO remove children
+                    choosableDicesMenu.gameObject.SetActive(false);
+                });
+            }
+            // currentPieceController.RollDice();
             turnActionsMenu.gameObject.SetActive(false);
         });
     }
@@ -190,5 +208,10 @@ public class PlayerUIController : MonoBehaviour
 
         cardTargetPlayer = (currentSelectableId, selectables[currentSelectableId]);
         SelectableItemUI.CanInteract(true);
+    }
+
+    public static float SpaceAround(float i, float count, float width)
+    {
+        return ((i + 1f) / (count + 1f) * width) - (width / 2f);
     }
 }

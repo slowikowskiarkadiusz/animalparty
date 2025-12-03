@@ -303,6 +303,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DiceOj
   dotPrefab: {fileID: 6157249053593143901, guid: bdb39572400874bbcac8b5985604436f, type: 3}
   pips: 5
+  minRotateVector: {x: 300, y: 300, z: 300}
+  maxRotateVector: {x: 700, y: 700, z: 700}
+  rotateChangeEvery: 1
+  rotateChangeSpeed: 1
 --- !u!54 &3664476118247429365
 Rigidbody:
   m_ObjectHideFlags: 0

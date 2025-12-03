@@ -1,5 +1,7 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using Mono.Cecil.Cil;
 using UnityEngine;
 
 public class DiceObject : MonoBehaviour
@@ -8,10 +10,17 @@ public class DiceObject : MonoBehaviour
 
     private float radius = 2;
     public bool pips = true;
-    public Dice dice = Dice.Default;
-    // public int[] Faces = new[] { 15, 4, 22, 48, 1, 12 };
+    private Dice dice = Dice.Default;
+    public Vector3 minRotateVector;
+    public Vector3 maxRotateVector;
+    public float rotateChangeEvery = 2;
+    public float rotateChangeSpeed = 1;
 
-    readonly Vector3[] dict = new[]
+    private Vector3 randomizedRotateVector;
+    private Vector3 rotateVector;
+    private Coroutine rollingDiceAnimation;
+
+    readonly Vector3[] rotationDict = new[]
     {
         Vector3.zero,
         new Vector3(0, 90, 0),
@@ -21,69 +30,98 @@ public class DiceObject : MonoBehaviour
         new Vector3(0, 180, 0),
     };
 
+    public void GenerateSides(Dice dice)
+    {
+        this.dice = dice;
+        
+        for (int i = 0; i < dice.Faces.Length; i++)
+            SpawnSide(i);
+
+        StartCoroutine(ModifyRotateVector());
+        StartCoroutine(RandomizeRollVector());
+
+        IEnumerator ModifyRotateVector()
+        {
+            while (true)
+            {
+                rotateVector = Vector3.Lerp(rotateVector, randomizedRotateVector, rotateChangeSpeed * Time.deltaTime);
+                yield return 0;
+            }
+        }
+
+        IEnumerator RandomizeRollVector()
+        {
+            rotateVector = minRotateVector;
+            while (true)
+            {
+                randomizedRotateVector = new Vector3(
+                    UnityEngine.Random.Range(minRotateVector.x, maxRotateVector.x),
+                    UnityEngine.Random.Range(minRotateVector.y, maxRotateVector.y),
+                    UnityEngine.Random.Range(minRotateVector.z, maxRotateVector.z));
+                yield return new WaitForSeconds(rotateChangeEvery);
+            }
+        }
+    }
+
+    public IEnumerator StartRollingDice()
+    {
+        if (rollingDiceAnimation != null)
+            StopCoroutine(rollingDiceAnimation);
+
+        while (true)
+        {
+            transform.Rotate(rotateVector * Time.deltaTime);
+            yield return 0;
+        }
+    }
+
+    public IEnumerator FinishRollingDice(int faceIndex)
+    {
+        if (rollingDiceAnimation != null)
+            StopCoroutine(rollingDiceAnimation);
+
+        transform.eulerAngles = rotationDict[faceIndex];
+        yield return LiftDiceAnimation();
+    }
+
+    public IEnumerator LiftDiceAnimation()
+    {
+        const float duration = 1f;
+        const float yOffset = 50;
+
+        var timer = 0f;
+
+        var startPosition = transform.position;
+
+        while (timer < duration)
+        {
+            transform.position = Vector3.Lerp(transform.position, startPosition + yOffset * Vector3.up, Time.deltaTime);
+
+            timer += Time.deltaTime;
+            yield return 0;
+        }
+    }
+
     private void SpawnSide(int index)
     {
+        var placements = dice.GenerateSidePipsPlacements(index);
         var sideTransform = new GameObject().transform;
         sideTransform.SetParent(transform);
         sideTransform.localScale = Vector3.one;
         sideTransform.localPosition = Vector3.zero;
 
-        var sqrt = Mathf.Sqrt(dice.Faces[index]);
-        var cols = (int)Mathf.Ceil(sqrt);
-        var perCol = (float)dice.Faces[index] / cols;
-        var rest = Mathf.Round((perCol - Mathf.Floor(perCol)) * cols);
-
-        var columns = new int[cols];
-
-        for (int i = 0; i <= columns.Length / 2; i++)
-        {
-            columns[i] = (int)perCol;
-            columns[columns.Length - 1 - i] = (int)perCol;
-
-            if (rest > 1)
-            {
-                rest -= 2;
-                columns[i]++;
-                columns[columns.Length - 1 - i]++;
-            }
-        }
-
-        if (rest == 1)
-            columns[columns.Length / 2]++;
-
         var width = radius * Mathf.Sqrt(2) / 2.7f;
-        for (int i = 0; i < columns.Length; i++)
+        foreach (var pip in placements.pips)
         {
-            for (int ii = 0; ii < columns[i]; ii++)
-            {
-                var dot = Instantiate(dotPrefab, sideTransform);
-                dot.localScale /= Math.Max(1, Math.Min(Mathf.Log(cols), Mathf.Sqrt(cols)));
-                dot.localPosition = new Vector3(
-                    -1.01f,
-                    Mathf.Lerp(-width / 2, width / 2, columns[i] == 1 ? 0.5f : ((float)ii / (columns[i] - 1))),
-                    Mathf.Lerp(-width / 2, width / 2, columns.Length == 1 ? 0.5f : (float)i / (columns.Length - 1)));
-            }
+            var dot = Instantiate(dotPrefab, sideTransform);
+            dot.localScale /= placements.scale;
+            dot.localPosition = new Vector3(
+                -1.01f,
+                pip.X * width,
+                pip.Y * width);
         }
 
         // sideTransform.localEulerAngles = new Vector3(0, (index % 3 + index / 5) * 90, index == 3 ? 90 : index == 4 ? -90 : 0);
-        sideTransform.localEulerAngles = dict[index];
-    }
-
-    public void Update()
-    {
-        if (!pips)
-            return;
-
-        for (int i = 1; i < transform.childCount; i++)
-        {
-            if (i < transform.childCount)
-                Destroy(transform.GetChild(i).gameObject);
-        }
-
-        for (int i = 0; i < dice.Faces.Length; i++)
-        {
-            SpawnSide(i);
-        }
-        pips = false;
+        sideTransform.localEulerAngles = rotationDict[index];
     }
 }
