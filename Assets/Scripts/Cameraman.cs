@@ -15,7 +15,8 @@ public class Cameraman : MonoBehaviour
 
     public float cameraMovementDuration = 0.5f;
     public float cameraMovementSpeed = 5f;
-    // public float cameraZoomingDuration = 0.5f;
+
+    public static Vector3 CurrentPosition => instance.transform.position;
 
     private void Awake()
     {
@@ -36,19 +37,16 @@ public class Cameraman : MonoBehaviour
     {
         instance.StopAllCoroutines();
         instance.StartCoroutine(instance.FocusOnPieceOnPlayersMoveCoroutine(piece));
-        instance.StartCoroutine(instance.FollowPiece(piece));
+        FollowTransform(piece.transform);
     }
 
     private IEnumerator FocusOnPieceOnPlayersMoveCoroutine(Piece piece)
     {
         var timer = 0f;
-        // var startPosition = transform.position;
-        // var destinationPosition = piece.transform.position - offset;
         var startSize = camera.orthographicSize;
         var destinationSize = focusedOnPieceSize;
         while (timer <= cameraMovementDuration)
         {
-            // transform.position = Vector3.Lerp(startPosition, destinationPosition, timer / cameraMovementDuration);
             camera.orthographicSize = Mathf.Lerp(startSize, destinationSize, timer / cameraMovementDuration);
 
             timer += Time.deltaTime;
@@ -56,18 +54,24 @@ public class Cameraman : MonoBehaviour
         }
 
         camera.orthographicSize = destinationSize;
-        // transform.position = destinationPosition;
     }
 
-    private IEnumerator FollowPiece(Piece piece)
+    public static void FollowTransform(Transform t)
+    {
+        instance.StartCoroutine(instance.FollowTransformCoroutine(t));
+    }
+
+    private IEnumerator FollowTransformCoroutine(Transform t)
     {
         while (true)
         {
-            var destination = piece.transform.position - offset;
-            if (Vector3.Distance(transform.position, destination) > 0.1)
+            if (!t) break;
+
+            var destination = t.position - offset;
+            if (Vector3.Distance(t.position, destination) > 0.1)
                 transform.position += cameraMovementSpeed * Time.deltaTime * (destination - transform.position);
 
-                yield return 0;
+            yield return 0;
         }
     }
 

@@ -63,8 +63,11 @@ public class BoardConductor : MonoBehaviour
         while (!(diceRoll = controller.PopDiceRoll()).HasValue)
             yield return 0;
 
+        Debug.Log("Dice roll " + diceRoll);
+
         while (diceRoll-- > 0)
         {
+            Debug.Log("Move");
             if (boardGraph.IsForkAheadOfPiece(playerId, out var fieldsAhead))
             {
                 playerUiController.ShowPathSelectionMenu(fieldsAhead);
@@ -77,8 +80,8 @@ public class BoardConductor : MonoBehaviour
                 var selectedPath = selectedPathIndex.Value;
                 yield return boardGraph.MovePieceForward(playerId, selectedPath);
             }
-
-            yield return boardGraph.MovePieceForward(playerId, 0);
+            else
+                yield return boardGraph.MovePieceForward(playerId, 0);
         }
 
         yield return boardGraph.RunFieldsEvent(controller, playerUiController);

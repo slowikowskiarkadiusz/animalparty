@@ -118,7 +118,7 @@ public class BoardGraph : MonoBehaviour
 
     public IEnumerator RunFieldsEvent(PieceController pieceController, PlayerUIController playerUiController)
     {
-        if (fieldEvents.TryGetValue(pieceController.PiecesPosition, out var value))
+        if (fieldEvents.TryGetValue(pieceController.Piece.Position, out var value))
             yield return value?.Execute(pieceController, playerUiController);
     }
 

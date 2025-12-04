@@ -1,18 +1,19 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class PieceController
 {
     public int Id { get; private set; }
     private int? diceRoll;
     private int? selectedPathIndex;
-
     private BoardConductor boardConductor;
+
     public Piece Piece { get; private set; }
-    private int selectedDiceIndex = 0;
 
     public List<Card> PiecesCards => Piece.Cards ?? Enumerable.Empty<Card>().ToList();
-    public string PiecesPosition => Piece.Position;
 
     public PieceController(int id, BoardConductor boardConductor, Piece piece)
     {
@@ -28,10 +29,20 @@ public class PieceController
 
     public void RollDice(Dice dice)
     {
-        boardConductor.DiceThrower.ShowDice(Piece, dice);
-        // var dice = Piece.Dices[selectedDiceIndex];
-        // var faceIndex = dice.GetRandomFaceIndex();
-        // diceRoll = dice.Faces[faceIndex];
+        var diceTransform = boardConductor.DiceThrower.ShowDice(Piece, dice);
+        Cameraman.FollowTransform(diceTransform);
+    }
+
+    public IEnumerator FinishRollingDice()
+    {
+        var dice = boardConductor.DiceThrower.Dice;
+        var faceIndex = dice.GetRandomFaceIndex();
+
+        Debug.Log("Face Index " + faceIndex);
+
+        yield return boardConductor.DiceThrower.FinishRolling(faceIndex);
+
+        diceRoll = dice.Faces[faceIndex];
     }
 
     public void SelectPath(int pathIndex)

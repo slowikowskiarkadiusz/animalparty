@@ -16,8 +16,8 @@ public class PlayerUIController : MonoBehaviour
     [SerializeField] private CardObject cardPrefab;
     [SerializeField] private SelectableItemUI cardTargetSelectionMenuItemPrefab;
     [SerializeField] private SelectableItemUI cardTargetSelectionMenuRandomItemPrefab;
-    [SerializeField] private RectTransform choosableDicesMenu;
     [SerializeField] private ChoosableDiceUI choosableDicePrefab;
+    [SerializeField] private SelectableItemUI finishRollingButton;
 
     private Camera mainCamera;
     private List<Button> pathSelectionButtons = new();
@@ -40,22 +40,24 @@ public class PlayerUIController : MonoBehaviour
         turnActionsMenu.gameObject.SetActive(true);
         rollDiceButton.onClick.AddListener(() =>
         {
-            choosableDicesMenu.gameObject.SetActive(true);
+            var items = new List<ChoosableDiceUI>();
             for (int i = 0; i < currentPieceController.Piece.Dices.Length; i++)
             {
                 Dice dice = currentPieceController.Piece.Dices[i];
-                var item = Instantiate(choosableDicePrefab, choosableDicesMenu);
+                var item = Instantiate(choosableDicePrefab, cardMenu.GetChild(0));
                 item.Dice = dice;
-                item.transform.localPosition = new Vector3(SpaceAround(i, currentPieceController.Piece.Dices.Length, choosableDicesMenu.sizeDelta.x), 0, 0);
                 item.Button.onClick.AddListener(() =>
                 {
+                    HideSelectables();
                     currentPieceController.RollDice(dice);
-                    //TODO remove children
-                    choosableDicesMenu.gameObject.SetActive(false);
+
+                    //todo
+                    finishRollingButton.gameObject.SetActive(true);
                 });
+
+                items.Add(item);
             }
-            // currentPieceController.RollDice();
-            turnActionsMenu.gameObject.SetActive(false);
+            ShowSelectables(items);
         });
     }
 
@@ -132,11 +134,15 @@ public class PlayerUIController : MonoBehaviour
     {
         var childCount = cardMenu.GetChild(0).childCount;
         for (int i = 0; i < childCount; i++)
-        {
             Destroy(cardMenu.GetChild(0).GetChild(i).gameObject);
-        }
 
         cardMenu.gameObject.SetActive(false);
+    }
+
+    public void FinishRollingDice()
+    {
+        finishRollingButton.gameObject.SetActive(false);
+        StartCoroutine(currentPieceController.FinishRollingDice());
     }
 
     private IEnumerator UseBirdCard(CardObject cardUI)

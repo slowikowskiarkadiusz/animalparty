@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Linq;
-using Mono.Cecil.Cil;
 using UnityEngine;
 
 public class DiceObject : MonoBehaviour
@@ -20,7 +18,7 @@ public class DiceObject : MonoBehaviour
     private Vector3 rotateVector;
     private Coroutine rollingDiceAnimation;
 
-    readonly Vector3[] rotationDict = new[]
+    public static Vector3[] RotationDict = new[]
     {
         Vector3.zero,
         new Vector3(0, 90, 0),
@@ -33,7 +31,7 @@ public class DiceObject : MonoBehaviour
     public void GenerateSides(Dice dice)
     {
         this.dice = dice;
-        
+
         for (int i = 0; i < dice.Faces.Length; i++)
             SpawnSide(i);
 
@@ -55,9 +53,9 @@ public class DiceObject : MonoBehaviour
             while (true)
             {
                 randomizedRotateVector = new Vector3(
-                    UnityEngine.Random.Range(minRotateVector.x, maxRotateVector.x),
-                    UnityEngine.Random.Range(minRotateVector.y, maxRotateVector.y),
-                    UnityEngine.Random.Range(minRotateVector.z, maxRotateVector.z));
+                    UnityEngine.Random.Range(0, 4) == 0 ? 0 : UnityEngine.Random.Range(minRotateVector.x, maxRotateVector.x),
+                    UnityEngine.Random.Range(0, 4) == 0 ? 0 : UnityEngine.Random.Range(minRotateVector.y, maxRotateVector.y),
+                    UnityEngine.Random.Range(0, 4) == 0 ? 0 : UnityEngine.Random.Range(minRotateVector.z, maxRotateVector.z));
                 yield return new WaitForSeconds(rotateChangeEvery);
             }
         }
@@ -75,36 +73,15 @@ public class DiceObject : MonoBehaviour
         }
     }
 
-    public IEnumerator FinishRollingDice(int faceIndex)
+    public void StopRollingDice()
     {
         if (rollingDiceAnimation != null)
             StopCoroutine(rollingDiceAnimation);
-
-        transform.eulerAngles = rotationDict[faceIndex];
-        yield return LiftDiceAnimation();
     }
 
-    public IEnumerator LiftDiceAnimation()
+    private void SpawnSide(int sideIndex, int? overrideFaceIndex = null)
     {
-        const float duration = 1f;
-        const float yOffset = 50;
-
-        var timer = 0f;
-
-        var startPosition = transform.position;
-
-        while (timer < duration)
-        {
-            transform.position = Vector3.Lerp(transform.position, startPosition + yOffset * Vector3.up, Time.deltaTime);
-
-            timer += Time.deltaTime;
-            yield return 0;
-        }
-    }
-
-    private void SpawnSide(int index)
-    {
-        var placements = dice.GenerateSidePipsPlacements(index);
+        var placements = dice.GenerateSidePipsPlacements(overrideFaceIndex ?? sideIndex);
         var sideTransform = new GameObject().transform;
         sideTransform.SetParent(transform);
         sideTransform.localScale = Vector3.one;
@@ -117,11 +94,19 @@ public class DiceObject : MonoBehaviour
             dot.localScale /= placements.scale;
             dot.localPosition = new Vector3(
                 -1.01f,
-                pip.X * width,
-                pip.Y * width);
+                pip.X * width - width / 2,
+                pip.Y * width - width / 2);
         }
 
         // sideTransform.localEulerAngles = new Vector3(0, (index % 3 + index / 5) * 90, index == 3 ? 90 : index == 4 ? -90 : 0);
-        sideTransform.localEulerAngles = rotationDict[index];
+        sideTransform.localEulerAngles = RotationDict[sideIndex];
+    }
+
+    public void GenerateSingleSide(int faceIndex)
+    {
+        for (int i = 1; i < transform.childCount; i++)
+            Destroy(transform.GetChild(i).gameObject);
+
+        SpawnSide(1, faceIndex);
     }
 }
