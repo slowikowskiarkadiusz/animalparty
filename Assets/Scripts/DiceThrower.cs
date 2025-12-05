@@ -5,6 +5,8 @@ using UnityEngine;
 public class DiceThrower : MonoBehaviour
 {
     [SerializeField] private DiceObject diceObjectPrefab;
+    [SerializeField] private AnimationCurve diceShowingSizeCurve;
+    [SerializeField] private AnimationCurve diceDisapearingSizeCurve;
 
     private DiceObject currentDiceObject;
     public Dice Dice { get; private set; }
@@ -18,31 +20,66 @@ public class DiceThrower : MonoBehaviour
         Dice = dice;
         currentDiceObject.GenerateSides(dice);
         currentDiceObject.transform.position = piece.transform.position + 2 * Vector3.up;
-        currentDiceObject.StartCoroutine(currentDiceObject.StartRollingDice());
+        currentDiceObject.StartCoroutine(Coroutine());
         return currentDiceObject.transform;
+
+        IEnumerator Coroutine()
+        {
+            StartCoroutine(ShowDiceCoroutine(true));
+            yield return currentDiceObject.StartRollingDice();
+        }
     }
 
     public IEnumerator FinishRolling(int faceIndex)
     {
-        const float duration = 1f;
-        const float yOffset = 1f;
+        yield return Coroutine();
+
+        StartCoroutine(ShowDiceCoroutine(false));
+
+        IEnumerator Coroutine()
+        {
+            const float duration = 1f;
+
+            const float yOffset = 1f;
+
+            var timer = 0f;
+
+            var startPosition = currentDiceObject.transform.position;
+
+            currentDiceObject.StopRollingDice();
+
+            while (timer < duration)
+            {
+                currentDiceObject.transform.position = Vector3.Lerp(currentDiceObject.transform.position, startPosition + yOffset * Vector3.up, Time.deltaTime);
+                currentDiceObject.GenerateSingleSide(faceIndex);
+                currentDiceObject.transform.rotation = Quaternion.LookRotation(Cameraman.CurrentPosition - currentDiceObject.transform.position);
+
+                timer += Time.deltaTime;
+                yield return 0;
+            }
+        }
+    }
+
+    private IEnumerator ShowDiceCoroutine(bool show)
+    {
+        const float duration = 0.3f;
 
         var timer = 0f;
 
-        var startPosition = currentDiceObject.transform.position;
-
         currentDiceObject.StopRollingDice();
+
+        var originalScale = currentDiceObject.transform.localScale;
 
         while (timer < duration)
         {
-            currentDiceObject.transform.position = Vector3.Lerp(currentDiceObject.transform.position, startPosition + yOffset * Vector3.up, Time.deltaTime);
-            currentDiceObject.GenerateSingleSide(faceIndex);
-            currentDiceObject.transform.rotation = Quaternion.LookRotation(Cameraman.CurrentPosition - currentDiceObject.transform.position);
-
+            var step = timer / duration;
+            var curve = show ? diceShowingSizeCurve : diceDisapearingSizeCurve;
+            currentDiceObject.transform.localScale = curve.Evaluate(step) * originalScale;
             timer += Time.deltaTime;
             yield return 0;
         }
 
-        Destroy(currentDiceObject.gameObject);
+        if (!show)
+            Destroy(currentDiceObject.gameObject);
     }
 }

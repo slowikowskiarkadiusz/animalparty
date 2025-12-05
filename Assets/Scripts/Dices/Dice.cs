@@ -53,8 +53,8 @@ public class Dice
         {
             for (int ii = 0; ii < columns[i]; ii++)
             {
-                var position = new Vector2(columns[i] == 1 ? 0.5f : ((float)ii / (columns[i] - 1)),
-                                    columns.Length == 1 ? 0.5f : (float)i / (columns.Length - 1));
+                var position = new Vector2(columns.Length == 1 ? 0.5f : (float)i / (columns.Length - 1),
+                    columns[i] == 1 ? 0.5f : ((float)ii / (columns[i] - 1)));
 
                 result.Add(position);
             }

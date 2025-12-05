@@ -21,7 +21,6 @@ public class FloatRandomlyUI : MonoBehaviour
         var originalPosition = transform.position;
         do
         {
-            Debug.Log("Change");
             bool isComingBack;
             Vector3 direction;
             if (Vector3.Distance(originalPosition, transform.position) > MaxDistance)

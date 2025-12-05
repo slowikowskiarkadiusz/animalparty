@@ -38,8 +38,6 @@ public class PieceController
         var dice = boardConductor.DiceThrower.Dice;
         var faceIndex = dice.GetRandomFaceIndex();
 
-        Debug.Log("Face Index " + faceIndex);
-
         yield return boardConductor.DiceThrower.FinishRolling(faceIndex);
 
         diceRoll = dice.Faces[faceIndex];

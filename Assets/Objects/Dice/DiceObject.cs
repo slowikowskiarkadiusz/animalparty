@@ -16,7 +16,7 @@ public class DiceObject : MonoBehaviour
 
     private Vector3 randomizedRotateVector;
     private Vector3 rotateVector;
-    private Coroutine rollingDiceAnimation;
+    private bool canRoll = false;
 
     public static Vector3[] RotationDict = new[]
     {
@@ -63,10 +63,8 @@ public class DiceObject : MonoBehaviour
 
     public IEnumerator StartRollingDice()
     {
-        if (rollingDiceAnimation != null)
-            StopCoroutine(rollingDiceAnimation);
-
-        while (true)
+        canRoll = true;
+        while (canRoll)
         {
             transform.Rotate(rotateVector * Time.deltaTime);
             yield return 0;
@@ -75,8 +73,7 @@ public class DiceObject : MonoBehaviour
 
     public void StopRollingDice()
     {
-        if (rollingDiceAnimation != null)
-            StopCoroutine(rollingDiceAnimation);
+        canRoll = false;
     }
 
     private void SpawnSide(int sideIndex, int? overrideFaceIndex = null)

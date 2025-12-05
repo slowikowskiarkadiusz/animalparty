@@ -50,7 +50,7 @@ public class BoardGraph : MonoBehaviour
         {new []{"AO", "AP"}, new VendorEventField()},
     };
 
-    private readonly Dictionary<string, CapsuleCollider> fieldDictionary = new();
+    private readonly Dictionary<string, BoxCollider> fieldDictionary = new();
     private ReadOnlyDictionary<string, List<Piece>> PiecesAtFields => new(Pieces.DistinctBy(x => x.Position).Select(x => new KeyValuePair<string, List<Piece>>(x.Position, Pieces.Where(y => y.Position == x.Position).ToList())).ToDictionary(x => x.Key, x => x.Value));
     public List<Piece> Pieces { get; } = new();
     public static int NumberOfPieces = -1;
@@ -64,10 +64,10 @@ public class BoardGraph : MonoBehaviour
         for (int i = 0; i < fields.childCount; i++)
         {
             var child = fields.GetChild(i);
-            fieldDictionary[child.name] = child.GetComponent<CapsuleCollider>();
+            fieldDictionary[child.name] = child.GetComponent<BoxCollider>();
 
             if (fieldEvents.TryGetValue(child.name, out _))
-                child.GetComponent<MeshRenderer>().material = fieldEventMaterial;
+                child.GetComponentInChildren<MeshRenderer>().material = fieldEventMaterial;
         }
 
         foreach (KeyValuePair<string[], FieldEvent> pair in interfieldEvents)
@@ -137,10 +137,11 @@ public class BoardGraph : MonoBehaviour
         {
             var rad = 360 / noOfPieces * i * Mathf.Deg2Rad;
             var collider = fieldDictionary[field];
-            var x = collider.transform.position.x + collider.radius * Mathf.Cos(rad);
-            var z = collider.transform.position.z + collider.radius * Mathf.Sin(rad);
+            var x = collider.transform.position.x + collider.bounds.extents.x * Mathf.Cos(rad);
+            var z = collider.transform.position.z + collider.bounds.extents.x * Mathf.Sin(rad);
+            var y = collider.transform.position.y + collider.bounds.size.y;
 
-            result.Add(new Vector3(x, collider.transform.position.y, z));
+            result.Add(new Vector3(x, y, z));
         }
 
         return result.ToArray();
