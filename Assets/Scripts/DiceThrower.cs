@@ -19,7 +19,10 @@ public class DiceThrower : MonoBehaviour
         currentDiceObject = Instantiate(diceObjectPrefab);
         Dice = dice;
         currentDiceObject.GenerateSides(dice);
-        currentDiceObject.transform.position = piece.transform.position + 2 * Vector3.up;
+
+        const float abovePieceY = 1.5f;
+
+        currentDiceObject.transform.position = piece.transform.position + abovePieceY * Vector3.up;
         currentDiceObject.StartCoroutine(Coroutine());
         return currentDiceObject.transform;
 

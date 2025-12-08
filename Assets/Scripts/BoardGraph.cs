@@ -45,9 +45,10 @@ public class BoardGraph : MonoBehaviour
         {"AJ", new VendorEventField()},
     };
 
-    private readonly Dictionary<string[], FieldEvent> interfieldEvents = new()
+    private readonly Dictionary<string, FieldEvent> interfieldEvents = new()
     {
-        {new []{"AO", "AP"}, new VendorEventField()},
+        {"AO__AP", new VendorEventField()},
+        {"AC__AD", new VendorEventField()},
     };
 
     private readonly Dictionary<string, BoxCollider> fieldDictionary = new();
@@ -58,6 +59,8 @@ public class BoardGraph : MonoBehaviour
     [SerializeField] private Transform fields;
     [SerializeField] private Float exclamationPointPrefab;
     [SerializeField] private Material fieldEventMaterial;
+    [SerializeField] private AnimationCurve movingPieceCurve;
+    [SerializeField] private float movingPieceMaxHeight = 2;
 
     public void Init()
     {
@@ -70,10 +73,11 @@ public class BoardGraph : MonoBehaviour
                 child.GetComponentInChildren<MeshRenderer>().material = fieldEventMaterial;
         }
 
-        foreach (KeyValuePair<string[], FieldEvent> pair in interfieldEvents)
+        foreach (KeyValuePair<string, FieldEvent> pair in interfieldEvents)
         {
-            var field1 = fieldDictionary[pair.Key[0]];
-            var field2 = fieldDictionary[pair.Key[1]];
+            var keys = pair.Key.Split("__");
+            var field1 = fieldDictionary[keys[0]];
+            var field2 = fieldDictionary[keys[1]];
 
             var exclamationPoint = Instantiate(exclamationPointPrefab, transform);
             exclamationPoint.transform.position = (field1.transform.position + field2.transform.position) / 2;
@@ -98,28 +102,47 @@ public class BoardGraph : MonoBehaviour
         }
     }
 
-    public IEnumerator MovePieceForward(int pieceId, int selectedPath)
+    public IEnumerator MovePieceForward(int pieceId, int selectedPath, PieceController pieceController, PlayerUIController playerUiController)
     {
-        var timer = 0f;
-        var startPosition = Pieces[pieceId].transform.position;
+        var haveRunInterfieldEvent = interfieldEvents.TryGetValue($"{Pieces[pieceId].Position}__{graph[Pieces[pieceId].Position][selectedPath]}", out var interfieldEvent);
         var field = graph[Pieces[pieceId].Position][selectedPath];
         Pieces[pieceId].Position = field;
         var positions = GetPiecesLocalPositionsAtField(field);
 
+        if (haveRunInterfieldEvent)
+        {
+            yield return MoveToPosition(pieceId, Pieces[pieceId].transform.position / 2 + positions.Last() / 2);
+
+            var faceEuler = Quaternion.LookRotation(positions.Last() - Pieces[pieceId].transform.position).eulerAngles;
+            Pieces[pieceId].transform.eulerAngles = new Vector3(0, 0, faceEuler.z);
+            yield return interfieldEvent?.Execute(pieceController, playerUiController);
+        }
+
+        yield return MoveToPosition(pieceId, positions.Last());
+
+        Pieces[pieceId].transform.position = positions.Last();
+        Pieces[pieceId].transform.localEulerAngles = Vector3.zero;
+
+        if (fieldEvents.TryGetValue(pieceController.Piece.Position, out var value))
+            yield return value?.Execute(pieceController, playerUiController);
+    }
+
+    private IEnumerator MoveToPosition(int pieceId, Vector3 targetPosition)
+    {
+        var timer = 0f;
+        var startPosition = Pieces[pieceId].transform.position;
+
         while (timer < movingPieceTime)
         {
-            Pieces[pieceId].transform.position = Vector3.Lerp(startPosition, positions.Last(), timer / movingPieceTime);
+            var y = movingPieceCurve.Evaluate(timer / movingPieceTime) * movingPieceMaxHeight * Vector3.up;
+            Pieces[pieceId].transform.position = Vector3.Lerp(startPosition, targetPosition, timer / movingPieceTime) + y;
+            var faceEuler = Quaternion.LookRotation(targetPosition - Pieces[pieceId].transform.position).eulerAngles;
+            Pieces[pieceId].transform.eulerAngles = new Vector3(0, 0, faceEuler.z);
+            // Pieces[pieceId].transform.localEulerAngles += Vector3.right * -13;
+
             timer += Time.deltaTime;
             yield return 0;
         }
-
-        Pieces[pieceId].transform.position = positions.Last();
-    }
-
-    public IEnumerator RunFieldsEvent(PieceController pieceController, PlayerUIController playerUiController)
-    {
-        if (fieldEvents.TryGetValue(pieceController.Piece.Position, out var value))
-            yield return value?.Execute(pieceController, playerUiController);
     }
 
     public int GetNumberOfPiecesAtField(string field)

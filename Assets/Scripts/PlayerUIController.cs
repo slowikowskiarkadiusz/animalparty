@@ -33,7 +33,8 @@ public class PlayerUIController : MonoBehaviour
     {
         rollDiceButton.onClick.RemoveAllListeners();
 
-        Cameraman.FocusOnPieceOnPlayersMove(pieceController.Piece);
+        Cameraman.Zoom(Cameraman.FocusedOnPieceSize);
+        Cameraman.Follow(() => pieceController.Piece.transform.position + Vector3.up * 1);
 
         currentPieceController = pieceController;
         playerNumberText.text = $"Player {currentPieceController.Id}";

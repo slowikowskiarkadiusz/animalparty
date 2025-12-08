@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Mono.Cecil.Cil;
 using UnityEngine;
 
 [RequireComponent(typeof(BoardGraph))]
@@ -75,13 +76,13 @@ public class BoardConductor : MonoBehaviour
                     yield return 0;
 
                 var selectedPath = selectedPathIndex.Value;
-                yield return boardGraph.MovePieceForward(playerId, selectedPath);
+                yield return boardGraph.MovePieceForward(playerId, selectedPath, controller, playerUiController);
             }
             else
-                yield return boardGraph.MovePieceForward(playerId, 0);
+            {
+                yield return boardGraph.MovePieceForward(playerId, 0, controller, playerUiController);
+            }
         }
-
-        yield return boardGraph.RunFieldsEvent(controller, playerUiController);
     }
 
     public void ApplyCard(BirdCard card, int playerId)
@@ -96,6 +97,7 @@ public class BoardConductor : MonoBehaviour
             pieceController.SetActive(false);
 
         pieceControllers[playerId].SetActive(true);
+        //TODO camera look in the direction of the next field
         playerUiController.ConnectToPlayer(pieceControllers[playerId]);
     }
 }

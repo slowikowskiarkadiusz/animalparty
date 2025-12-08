@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ public class Cameraman : MonoBehaviour
     private Vector3 originalPosition;
     private Vector3 offset;
     private float originalSize;
-    private const float focusedOnPieceSize = 3;
+    public const float FocusedOnPieceSize = 2;
 
     private new Camera camera;
 
@@ -17,6 +18,8 @@ public class Cameraman : MonoBehaviour
     public float cameraMovementSpeed = 5f;
 
     public static Vector3 CurrentPosition => instance.transform.position;
+
+    private Coroutine followingCoroutine;
 
     private void Awake()
     {
@@ -33,32 +36,58 @@ public class Cameraman : MonoBehaviour
             offset = hit.point - originalPosition;
     }
 
-    public static void FocusOnPieceOnPlayersMove(Piece piece)
-    {
-        instance.StopAllCoroutines();
-        instance.StartCoroutine(instance.FocusOnPieceOnPlayersMoveCoroutine(piece));
-        FollowTransform(piece.transform);
-    }
-
-    private IEnumerator FocusOnPieceOnPlayersMoveCoroutine(Piece piece)
+    public static IEnumerator Zoom(float size)
     {
         var timer = 0f;
-        var startSize = camera.orthographicSize;
-        var destinationSize = focusedOnPieceSize;
-        while (timer <= cameraMovementDuration)
+        var startSize = instance.camera.orthographicSize;
+        var destinationSize = size;
+        while (timer <= instance.cameraMovementDuration)
         {
-            camera.orthographicSize = Mathf.Lerp(startSize, destinationSize, timer / cameraMovementDuration);
+            instance.camera.orthographicSize = Mathf.Lerp(startSize, destinationSize, timer / instance.cameraMovementDuration);
 
             timer += Time.deltaTime;
             yield return 0;
         }
 
-        camera.orthographicSize = destinationSize;
+        instance.camera.orthographicSize = destinationSize;
     }
 
-    public static void FollowTransform(Transform t)
+    public static void Follow(Func<Vector3> func)
     {
-        instance.StartCoroutine(instance.FollowTransformCoroutine(t));
+        if (instance.followingCoroutine != null)
+            instance.StopCoroutine(instance.followingCoroutine);
+        instance.followingCoroutine = instance.StartCoroutine(instance.FollowVector3Coroutine(func));
+    }
+
+    public static void Follow(Transform t)
+    {
+        if (instance.followingCoroutine != null)
+            instance.StopCoroutine(instance.followingCoroutine);
+        instance.followingCoroutine = instance.StartCoroutine(instance.FollowTransformCoroutine(t));
+    }
+
+    private IEnumerator FollowVector3Coroutine(Func<Vector3> func)
+    {
+        while (true)
+        {
+            Vector3 position;
+
+            try
+            {
+                position = func();
+            }
+            catch
+            {
+                break;
+            }
+
+            var destination = position - offset;
+
+            if (Vector3.Distance(position, destination) > 0.1)
+                transform.position += cameraMovementSpeed * Time.deltaTime * (destination - transform.position);
+
+            yield return 0;
+        }
     }
 
     private IEnumerator FollowTransformCoroutine(Transform t)

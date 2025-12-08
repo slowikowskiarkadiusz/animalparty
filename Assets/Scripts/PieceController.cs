@@ -30,7 +30,7 @@ public class PieceController
     public void RollDice(Dice dice)
     {
         var diceTransform = boardConductor.DiceThrower.ShowDice(Piece, dice);
-        Cameraman.FollowTransform(diceTransform);
+        Cameraman.Follow(diceTransform);
     }
 
     public IEnumerator FinishRollingDice()

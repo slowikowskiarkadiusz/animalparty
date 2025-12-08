@@ -8,8 +8,10 @@ public class Dice
     private static readonly Random rng = new();
     public int[] Faces { get; }
 
-    public static Dice Default => new(new[] { 1, 2, 3, 4, 5, 6 });
-    public static Dice FukkedUp => new(new[] { 15, 4, 22, 48, 1, 12 });
+    public static Dice Default => new(new[] { 9, 9, 9, 9, 9, 9 });
+    public static Dice FukkedUp => new(new[] { 9, 9, 9, 9, 9, 9 });
+    // public static Dice Default => new(new[] { 1, 2, 3, 4, 5, 6 });
+    // public static Dice FukkedUp => new(new[] { 15, 4, 22, 48, 1, 12 });
 
     public Dice(int[] faces)
     {

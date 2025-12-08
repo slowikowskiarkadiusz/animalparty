@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class VendorEventField : FieldEvent
 {
@@ -18,6 +19,8 @@ public class VendorEventField : FieldEvent
 
         while (!canYield)
             yield return 0;
+
+        Debug.Log("Yields");
     }
 
     private IEnumerator OnCardSelected(CardObject card, PieceController pieceController, PlayerUIController playerUiController)
