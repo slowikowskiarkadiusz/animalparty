@@ -7,7 +7,7 @@ public class VendorEventField : FieldEvent
     private List<Card> offer = new() { TotemCard.PerpetualVelocity, TotemCard.PerpetualVelocity, TotemCard.PerpetualVelocity, TotemCard.PerpetualVelocity };
     private bool canYield = false;
 
-    public override IEnumerator Execute(PieceController pieceController, PlayerUIController playerUiController)
+    public override IEnumerator Execute(PieceController pieceController, PlayerUIController playerUiController, LoadableSet[] loadableSets)
     {
         playerUiController.ShowCards(offer, card =>
         {
@@ -21,11 +21,6 @@ public class VendorEventField : FieldEvent
             yield return 0;
 
         Reset();
-    }
-
-    protected override void Stop()
-    {
-        canYield = true;
     }
 
     private IEnumerator OnCardSelected(CardObject card, PieceController pieceController, PlayerUIController playerUiController)

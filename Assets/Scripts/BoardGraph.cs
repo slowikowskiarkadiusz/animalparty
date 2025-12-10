@@ -49,6 +49,7 @@ public class BoardGraph : MonoBehaviour
     {
         {"AO__AP", new VendorEventField()},
         {"AC__AD", new VendorEventField()},
+        {"AA__AB", new CoinGivingEvent()},
     };
 
     private readonly Dictionary<string, BoxCollider> fieldDictionary = new();
@@ -61,6 +62,7 @@ public class BoardGraph : MonoBehaviour
     [SerializeField] private Material fieldEventMaterial;
     [SerializeField] private AnimationCurve movingPieceCurve;
     [SerializeField] private float movingPieceMaxHeight = 2;
+    [SerializeField] private LoadableSet[] loadableSets;
 
     public void Init()
     {
@@ -115,7 +117,7 @@ public class BoardGraph : MonoBehaviour
 
             var faceEuler = Quaternion.LookRotation(positions.Last() - Pieces[pieceId].transform.position).eulerAngles;
             Pieces[pieceId].transform.eulerAngles = new Vector3(0, 0, faceEuler.z);
-            yield return interfieldEvent?.Execute(pieceController, playerUiController);
+            yield return interfieldEvent?.Execute(pieceController, playerUiController, loadableSets);
         }
 
         yield return MoveToPosition(pieceId, positions.Last());
@@ -124,7 +126,7 @@ public class BoardGraph : MonoBehaviour
         Pieces[pieceId].transform.localEulerAngles = Vector3.zero;
 
         if (fieldEvents.TryGetValue(pieceController.Piece.Position, out var value))
-            yield return value?.Execute(pieceController, playerUiController);
+            yield return value?.Execute(pieceController, playerUiController, loadableSets);
     }
 
     private IEnumerator MoveToPosition(int pieceId, Vector3 targetPosition)

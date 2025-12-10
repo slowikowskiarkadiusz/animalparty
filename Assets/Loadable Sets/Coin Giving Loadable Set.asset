@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4177fdd55494b40b493e640662f5d28a, type: 3}
+  m_Name: Coin Giving Loadable Set
+  m_EditorClassIdentifier: Assembly-CSharp::LoadableSet
+  Collection:
+  - {fileID: 1690340335337572050, guid: 6df758df53e604a98a525ef611098a0e, type: 3}

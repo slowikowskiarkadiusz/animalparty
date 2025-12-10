@@ -119,7 +119,7 @@ public class PlayerUIController : MonoBehaviour
     {
         for (int i = 0; i < pieces.Count; i++)
         {
-            var item = Instantiate(playerTagPrefab, transform);
+            var item = Instantiate(playerTagPrefab, playersTagsTransform);
             item.transform.localPosition = new Vector3(SpaceAround(i, pieces.Count, playersTagsTransform.sizeDelta.x), playersTagsTransform.position.y);
             item.PieceToFollow = pieces[i];
         }

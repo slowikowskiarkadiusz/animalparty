@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 08b70971a107846a1abdfecfdeba1723, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.075
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08b70971a107846a1abdfecfdeba1723, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.075
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08b70971a107846a1abdfecfdeba1723, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.075
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08b70971a107846a1abdfecfdeba1723, type: 3}
       propertyPath: m_LocalPosition.x
@@ -112,6 +112,30 @@ MonoBehaviour:
   dirChangeTime: 2
   axes: 01000000
   runOnStart: 1
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &7443177749927365545
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -18,6 +18,7 @@ public class Float : MonoBehaviour
     [SerializeField] private float dirChangeTime = 1.5f;
     [SerializeField] private List<Axis> axes = new();
     [SerializeField] private bool runOnStart = false;
+    [SerializeField] private AnimationCurve curve = new AnimationCurve(new Keyframe[] { new Keyframe(0, 0, 1, 1), new Keyframe(1, 1, 1, 1) });
     private Vector3? originalPosition;
     private List<Coroutine> coroutines = new();
 
@@ -62,7 +63,7 @@ public class Float : MonoBehaviour
             while (timer < dirChangeTime)
             {
                 // transform.position = Vector3.Lerp(transform.position, destination, Time.deltaTime);
-                transform.position = Vector3.Lerp(start, destination, timer / dirChangeTime);
+                transform.position = Vector3.Lerp(start, destination, curve.Evaluate(timer / dirChangeTime));
                 timer += Time.deltaTime;
                 yield return 0;
             }
