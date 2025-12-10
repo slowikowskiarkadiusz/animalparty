@@ -1,15 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
-using Mono.Cecil.Cil;
 using UnityEngine;
 
 [RequireComponent(typeof(BoardGraph))]
 [RequireComponent(typeof(DiceThrower))]
 public class BoardConductor : MonoBehaviour
 {
+    private readonly List<PlayerRegistration> playerRegistrations = new()
+    {
+        new("lysy", PieceType.Default),
+        new("seksovny", PieceType.Default),
+        new("theliver", PieceType.Default),
+        new("Domisia", PieceType.Default),
+    };
+
+    private readonly Color[] colors = new Color[]
+    {
+        new(0, 1, 0),
+        new(1, 0, 0),
+        new(0, 0, 1),
+        new(0.5f, 0.5f, 0.5f),
+        new(0, 0, 0),
+        new(1, 1, 1),
+        new(1, 0.5f, 0),
+        new(1, 1, 0),
+        new(0, 1, 1),
+        new(0, 0.5f, 1),
+        new(0.5f, 0, 1),
+        new(1, 0, 0.5f),
+    };
+
     [SerializeField] private Piece piecePrefab;
     [SerializeField] private PieceController pieceControllerPrefab;
-    [SerializeField] private int noOfPlayersToSpawn = 4;
     [SerializeField] private PlayerUIController playerUiController;
     private BoardGraph boardGraph;
     private readonly List<PieceController> pieceControllers = new();
@@ -43,14 +65,16 @@ public class BoardConductor : MonoBehaviour
     {
         boardGraph = GetComponent<BoardGraph>();
         boardGraph.Init();
-        appliedBirdCards = new List<(BirdCard, int)>[noOfPlayersToSpawn];
+        appliedBirdCards = new List<(BirdCard, int)>[playerRegistrations.Count];
 
-        for (int i = 0; i < noOfPlayersToSpawn; i++)
+        for (int i = 0; i < playerRegistrations.Count; i++)
         {
             appliedBirdCards[i] = new();
-            boardGraph.AddPiece(Instantiate(piecePrefab, boardGraph.transform));
+            boardGraph.AddPiece(Instantiate(piecePrefab, boardGraph.transform).Spawn(playerRegistrations[i], colors[i]));
             pieceControllers.Add(new PieceController(i, this, boardGraph.Pieces[i]));
         }
+
+        playerUiController.SpawnPlayersTags(boardGraph.Pieces);
 
         yield return null;
     }

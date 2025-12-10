@@ -36,20 +36,24 @@ public class Cameraman : MonoBehaviour
             offset = hit.point - originalPosition;
     }
 
-    public static IEnumerator Zoom(float size)
+    public static void Zoom(float size)
     {
-        var timer = 0f;
-        var startSize = instance.camera.orthographicSize;
-        var destinationSize = size;
-        while (timer <= instance.cameraMovementDuration)
+        instance.StartCoroutine(Coroutine());
+        IEnumerator Coroutine()
         {
-            instance.camera.orthographicSize = Mathf.Lerp(startSize, destinationSize, timer / instance.cameraMovementDuration);
+            var timer = 0f;
+            var startSize = instance.camera.orthographicSize;
+            var destinationSize = size;
+            while (timer <= instance.cameraMovementDuration)
+            {
+                instance.camera.orthographicSize = Mathf.Lerp(startSize, destinationSize, timer / instance.cameraMovementDuration);
 
-            timer += Time.deltaTime;
-            yield return 0;
+                timer += Time.deltaTime;
+                yield return 0;
+            }
+
+            instance.camera.orthographicSize = destinationSize;
         }
-
-        instance.camera.orthographicSize = destinationSize;
     }
 
     public static void Follow(Func<Vector3> func)
@@ -97,7 +101,8 @@ public class Cameraman : MonoBehaviour
             if (!t) break;
 
             var destination = t.position - offset;
-            if (Vector3.Distance(t.position, destination) > 0.1)
+            var distance = Vector3.Distance(t.position, destination);
+            if (distance > 0.1)
                 transform.position += cameraMovementSpeed * Time.deltaTime * (destination - transform.position);
 
             yield return 0;

@@ -18,6 +18,8 @@ public class PlayerUIController : MonoBehaviour
     [SerializeField] private SelectableItemUI cardTargetSelectionMenuRandomItemPrefab;
     [SerializeField] private ChoosableDiceUI choosableDicePrefab;
     [SerializeField] private SelectableItemUI finishRollingButton;
+    [SerializeField] private RectTransform playersTagsTransform;
+    [SerializeField] private PlayerTag playerTagPrefab;
 
     private Camera mainCamera;
     private List<Button> pathSelectionButtons = new();
@@ -97,9 +99,9 @@ public class PlayerUIController : MonoBehaviour
         cardMenu.Open(selectables, () => { });
     }
 
-    public void ShowCards(IEnumerable<Card> cards, Action<CardObject> onClick)
+    public void ShowCards(IEnumerable<Card> cards, Action<CardObject> onClick, Action onClose = null)
     {
-        cardMenu.ShowCards(cardPrefab, cards, onClick);
+        cardMenu.ShowCards(cardPrefab, cards, onClick, onClose);
     }
 
     public void HideSelectables()
@@ -111,6 +113,16 @@ public class PlayerUIController : MonoBehaviour
     {
         finishRollingButton.gameObject.SetActive(false);
         StartCoroutine(currentPieceController.FinishRollingDice());
+    }
+
+    public void SpawnPlayersTags(List<Piece> pieces)
+    {
+        for (int i = 0; i < pieces.Count; i++)
+        {
+            var item = Instantiate(playerTagPrefab, transform);
+            item.transform.localPosition = new Vector3(SpaceAround(i, pieces.Count, playersTagsTransform.sizeDelta.x), playersTagsTransform.position.y);
+            item.PieceToFollow = pieces[i];
+        }
     }
 
     private IEnumerator UseBirdCard(CardObject cardUI)

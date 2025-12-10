@@ -41,6 +41,8 @@ public class PieceController
         yield return boardConductor.DiceThrower.FinishRolling(faceIndex);
 
         diceRoll = dice.Faces[faceIndex];
+
+        Cameraman.Follow(Piece.transform);
     }
 
     public void SelectPath(int pathIndex)

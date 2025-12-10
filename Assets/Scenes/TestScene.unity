@@ -750,7 +750,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5039e42e1593845dabaa283ded60fb42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cameraman
-  cameraMovementDuration: 0.5
+  cameraMovementDuration: 0.3
   cameraMovementSpeed: 5
 --- !u!1001 &392449962
 PrefabInstance:
@@ -1509,7 +1509,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardConductor
   piecePrefab: {fileID: 2886986633810399036, guid: 7a88dbb76d6a34bd2bc458a9950000c1, type: 3}
-  noOfPlayersToSpawn: 1
   playerUiController: {fileID: 1248138779}
 --- !u!114 &780789858
 MonoBehaviour:
@@ -2834,6 +2833,7 @@ RectTransform:
   - {fileID: 1652216716}
   - {fileID: 142355674}
   - {fileID: 723328614}
+  - {fileID: 2009375321}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2863,6 +2863,8 @@ MonoBehaviour:
   cardTargetSelectionMenuRandomItemPrefab: {fileID: 6831938546242114569, guid: 7e959489f89bc4e66b41912d129b65f0, type: 3}
   choosableDicePrefab: {fileID: 4239154002764040971, guid: 5f2f633d1dcb14a579ebfb1b0a8ce439, type: 3}
   finishRollingButton: {fileID: 931916360}
+  playersTagsTransform: {fileID: 2009375321}
+  playerTagPrefab: {fileID: 7877891675585417506, guid: 24439981be1304efe9aeccf998573f37, type: 3}
 --- !u!1 &1265943005
 GameObject:
   m_ObjectHideFlags: 0
@@ -3125,7 +3127,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Player x
+  m_text: beada
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7ad2f3fb86433491a86597e257bf6472, type: 2}
   m_sharedMaterial: {fileID: -8018265696662028088, guid: 7ad2f3fb86433491a86597e257bf6472, type: 2}
@@ -3788,6 +3790,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!1 &2009375320
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2009375321}
+  m_Layer: 5
+  m_Name: Players Tags
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2009375321
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2009375320}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1248138778}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!4 &2020762465 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1095394878588798479, guid: e4744de97cb81447e86e2f8c03636c90, type: 3}

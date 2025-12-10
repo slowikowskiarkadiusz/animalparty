@@ -24,7 +24,7 @@ public class MenuBackground : MonoBehaviour
         Resize(1, 0);
     }
 
-    public void ShowCards(CardObject cardPrefab, IEnumerable<Card> cards, Action<CardObject> onClick)
+    public void ShowCards(CardObject cardPrefab, IEnumerable<Card> cards, Action<CardObject> onClick, Action onClose)
     {
         if (gameObject.activeInHierarchy)
             return;
@@ -40,8 +40,7 @@ public class MenuBackground : MonoBehaviour
             cardUIs.Add(card);
         }
 
-        //TODO
-        Open(cardUIs, () => { });
+        Open(cardUIs, onClose);
     }
 
     public void Open(IEnumerable<SelectableItemUI> selectables, Action onClose)
@@ -85,7 +84,8 @@ public class MenuBackground : MonoBehaviour
         for (int i = 0; i < childCount; i++)
             Destroy(transform.GetChild(0).GetChild(i).gameObject);
 
-        onClose();
+        if (onClose != null)
+            onClose();
 
         gameObject.SetActive(false);
     }

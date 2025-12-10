@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class VendorEventField : FieldEvent
 {
@@ -13,14 +12,20 @@ public class VendorEventField : FieldEvent
         playerUiController.ShowCards(offer, card =>
         {
             playerUiController.StartCoroutine(OnCardSelected(card, pieceController, playerUiController));
-        });
+        },
+        () => canYield = true);
 
         // here can be like animations, camera zooming and such
 
         while (!canYield)
             yield return 0;
 
-        Debug.Log("Yields");
+        Reset();
+    }
+
+    protected override void Stop()
+    {
+        canYield = true;
     }
 
     private IEnumerator OnCardSelected(CardObject card, PieceController pieceController, PlayerUIController playerUiController)
@@ -30,5 +35,10 @@ public class VendorEventField : FieldEvent
         pieceController.PiecesCards.Add(card.Card);
         canYield = true;
         playerUiController.HideSelectables();
+    }
+
+    private void Reset()
+    {
+        canYield = false;
     }
 }
