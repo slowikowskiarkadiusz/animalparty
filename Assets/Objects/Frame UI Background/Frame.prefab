@@ -1,0 +1,155 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &8796673836968941688
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.5238094
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.5238094
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.5238094
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -401.1601
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -217.14284
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.04475675
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.000000021855694
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 96049f5d3fdab41f68e2e88ff36a53a8, type: 2}
+    - target: {fileID: -4897732323685117858, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 96049f5d3fdab41f68e2e88ff36a53a8, type: 2}
+    - target: {fileID: -3111565609762313623, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -1441023950210119868, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_Name
+      value: Frame
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2191750151954457832, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2229032678205019293, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4f340b334dc7e44b9a6b62b6fcc2105c, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 190660871694855454}
+  m_SourcePrefab: {fileID: 100100000, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+--- !u!1 &8562884332267283753 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8707f8740300540ccbaed6460a53d22d, type: 3}
+  m_PrefabInstance: {fileID: 8796673836968941688}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &190660871694855454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8562884332267283753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f04b95391f484c9fb1fc1159da356c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FrameResizer
+  to: 30
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 7.1425085
+      outSlope: 7.1425085
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.10989011
+    - serializedVersion: 3
+      time: 0.5749999
+      value: 1.2
+      inSlope: -0.3511671
+      outSlope: -0.3511671
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.5919419
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -0.0045476314
+      outSlope: -0.0045476314
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 1
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  animationTime: 0.2
+  isRunAnimation: 0

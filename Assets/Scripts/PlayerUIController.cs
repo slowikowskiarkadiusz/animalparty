@@ -12,7 +12,7 @@ public class PlayerUIController : MonoBehaviour
     [SerializeField] private RectTransform turnActionsMenu;
     [SerializeField] private Button rollDiceButton;
     [SerializeField] private Button pathSelectionButtonPrefab;
-    [SerializeField] private RectTransform cardMenu;
+    [SerializeField] private MenuBackground cardMenu;
     [SerializeField] private CardObject cardPrefab;
     [SerializeField] private SelectableItemUI cardTargetSelectionMenuItemPrefab;
     [SerializeField] private SelectableItemUI cardTargetSelectionMenuRandomItemPrefab;
@@ -45,7 +45,7 @@ public class PlayerUIController : MonoBehaviour
             for (int i = 0; i < currentPieceController.Piece.Dices.Length; i++)
             {
                 Dice dice = currentPieceController.Piece.Dices[i];
-                var item = Instantiate(choosableDicePrefab, cardMenu.GetChild(0));
+                var item = Instantiate(choosableDicePrefab, cardMenu.SelectablesParent);
                 item.Dice = dice;
                 item.Button.onClick.AddListener(() =>
                 {
@@ -94,50 +94,17 @@ public class PlayerUIController : MonoBehaviour
 
     public void ShowSelectables(IEnumerable<SelectableItemUI> selectables)
     {
-        if (cardMenu.gameObject.activeInHierarchy)
-            return;
-
-        cardMenu.gameObject.SetActive(true);
-        var width = cardMenu.sizeDelta.x;
-
-        var count = selectables.Count();
-        for (int i = 0; i < count; i++)
-        {
-            var selectable = selectables.ElementAt(i);
-            selectable.transform.SetParent(cardMenu.GetChild(0));
-            var posX = ((i + 1f) / (count + 1f) * width) - (width / 2f);
-            selectable.transform.localPosition = new Vector3(posX, 0, 0);
-            selectable.Float.Offset = (float)i / count;
-            selectable.Float.StartRunning();
-        }
+        cardMenu.Open(selectables, () => { });
     }
 
     public void ShowCards(IEnumerable<Card> cards, Action<CardObject> onClick)
     {
-        if (cardMenu.gameObject.activeInHierarchy)
-            return;
-
-        var cardUIs = new List<CardObject>();
-
-        var count = cards.Count();
-        for (int i = 0; i < count; i++)
-        {
-            var card = Instantiate(cardPrefab, cardMenu.GetChild(0));
-            card.Card = cards.ElementAt(i);
-            card.GetComponent<Button>().onClick.AddListener(() => onClick(card));
-            cardUIs.Add(card);
-        }
-
-        ShowSelectables(cardUIs);
+        cardMenu.ShowCards(cardPrefab, cards, onClick);
     }
 
     public void HideSelectables()
     {
-        var childCount = cardMenu.GetChild(0).childCount;
-        for (int i = 0; i < childCount; i++)
-            Destroy(cardMenu.GetChild(0).GetChild(i).gameObject);
-
-        cardMenu.gameObject.SetActive(false);
+        cardMenu.Close();
     }
 
     public void FinishRollingDice()
@@ -182,14 +149,14 @@ public class PlayerUIController : MonoBehaviour
             SelectableItemUI item;
             if (i != BoardGraph.NumberOfPieces)
             {
-                item = Instantiate(cardTargetSelectionMenuItemPrefab, cardMenu);
+                item = Instantiate(cardTargetSelectionMenuItemPrefab, cardMenu.SelectablesParent);
                 var playerId = i;
                 item.Button.onClick.AddListener(() => cardTargetPlayer = (playerId, item));
                 result.Add(item);
             }
             else
             {
-                randomItem = Instantiate(cardTargetSelectionMenuRandomItemPrefab, cardMenu);
+                randomItem = Instantiate(cardTargetSelectionMenuRandomItemPrefab, cardMenu.SelectablesParent);
                 randomItem.Button.onClick.AddListener(() => StartCoroutine(RandomizeCardTargetSelection(result)));
             }
         }
