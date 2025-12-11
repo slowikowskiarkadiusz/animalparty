@@ -42,7 +42,6 @@ public class BoardGraph : MonoBehaviour
 
     private readonly Dictionary<string, FieldEvent> fieldEvents = new()
     {
-        {"AJ", new VendorEventField()},
     };
 
     private readonly Dictionary<string, FieldEvent> interfieldEvents = new()

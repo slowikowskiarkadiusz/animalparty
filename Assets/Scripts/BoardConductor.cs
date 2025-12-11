@@ -53,7 +53,7 @@ public class BoardConductor : MonoBehaviour
         {
             for (int i = 0; i < boardGraph.Pieces.Count; i++)
             {
-                SwitchToPlayer(i);
+                yield return SwitchToPlayer(i);
                 yield return PlayersTurn(i);
             }
 
@@ -115,13 +115,13 @@ public class BoardConductor : MonoBehaviour
             appliedBirdCards[playerId].Add((card, card.Turns.Value));
     }
 
-    private void SwitchToPlayer(int playerId)
+    private IEnumerator SwitchToPlayer(int playerId)
     {
         foreach (var pieceController in pieceControllers)
             pieceController.SetActive(false);
 
         pieceControllers[playerId].SetActive(true);
         //TODO camera look in the direction of the next field
-        playerUiController.ConnectToPlayer(pieceControllers[playerId]);
+        yield return playerUiController.ConnectToPlayer(pieceControllers[playerId]);
     }
 }

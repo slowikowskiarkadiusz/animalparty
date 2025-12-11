@@ -24,12 +24,12 @@ public class MenuBackground : MonoBehaviour
         Resize(1, 0);
     }
 
-    public void ShowCards(CardObject cardPrefab, IEnumerable<Card> cards, Action<CardObject> onClick, Action onClose)
+    public List<CardUI> ShowCards(CardUI cardPrefab, IEnumerable<Card> cards, Action<CardUI> onClick, Action onClose)
     {
         if (gameObject.activeInHierarchy)
-            return;
+            return null;
 
-        var cardUIs = new List<CardObject>();
+        var cardUIs = new List<CardUI>();
 
         var count = cards.Count();
         for (int i = 0; i < count; i++)
@@ -41,6 +41,8 @@ public class MenuBackground : MonoBehaviour
         }
 
         Open(cardUIs, onClose);
+
+        return cardUIs;
     }
 
     public void Open(IEnumerable<SelectableItemUI> selectables, Action onClose)

@@ -9,11 +9,16 @@ public class VendorEventField : FieldEvent
 
     public override IEnumerator Execute(PieceController pieceController, PlayerUIController playerUiController, LoadableSet[] loadableSets)
     {
-        playerUiController.ShowCards(offer, card =>
+        var cardsUI = playerUiController.ShowCards(offer, card =>
+                {
+                    playerUiController.StartCoroutine(OnCardSelected(card, pieceController, playerUiController));
+                },
+                () => canYield = true);
+
+        foreach (var cardUI in cardsUI)
         {
-            playerUiController.StartCoroutine(OnCardSelected(card, pieceController, playerUiController));
-        },
-        () => canYield = true);
+            cardUI.ShowPrice(2);
+        }
 
         // here can be like animations, camera zooming and such
 
@@ -23,7 +28,7 @@ public class VendorEventField : FieldEvent
         Reset();
     }
 
-    private IEnumerator OnCardSelected(CardObject card, PieceController pieceController, PlayerUIController playerUiController)
+    private IEnumerator OnCardSelected(CardUI card, PieceController pieceController, PlayerUIController playerUiController)
     {
         yield return card.RunSelectingAnimation();
 

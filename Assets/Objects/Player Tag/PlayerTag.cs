@@ -9,6 +9,8 @@ public class PlayerTag : MonoBehaviour
 
     public Piece PieceToFollow { get; set; }
 
+    public TextMeshProUGUI PlayerNameText => playerNameText;
+
     private void Update()
     {
         playerNameText.text = PieceToFollow.PlayersName;

@@ -13,27 +13,35 @@ public class PlayerUIController : MonoBehaviour
     [SerializeField] private Button rollDiceButton;
     [SerializeField] private Button pathSelectionButtonPrefab;
     [SerializeField] private MenuBackground cardMenu;
-    [SerializeField] private CardObject cardPrefab;
+    [SerializeField] private CardUI cardPrefab;
     [SerializeField] private SelectableItemUI cardTargetSelectionMenuItemPrefab;
     [SerializeField] private SelectableItemUI cardTargetSelectionMenuRandomItemPrefab;
     [SerializeField] private ChoosableDiceUI choosableDicePrefab;
     [SerializeField] private SelectableItemUI finishRollingButton;
     [SerializeField] private RectTransform playersTagsTransform;
     [SerializeField] private PlayerTag playerTagPrefab;
+    [SerializeField] private AnimationCurve playerTagFlashingCurve;
 
     private Camera mainCamera;
     private List<Button> pathSelectionButtons = new();
     private PieceController currentPieceController;
     private (int id, SelectableItemUI selectable)? cardTargetPlayer;
+    private List<PlayerTag> playerTags;
 
     private void Start()
     {
         mainCamera = Camera.main;
     }
 
-    public void ConnectToPlayer(PieceController pieceController)
+    public IEnumerator ConnectToPlayer(PieceController pieceController)
     {
         rollDiceButton.onClick.RemoveAllListeners();
+
+        Cameraman.Reset();
+
+        yield return new WaitForSeconds(1);
+
+        yield return FlashPlayerTagName(pieceController.Id);
 
         Cameraman.Zoom(Cameraman.FocusedOnPieceSize);
         Cameraman.Follow(() => pieceController.Piece.transform.position + Vector3.up * 1);
@@ -62,6 +70,53 @@ public class PlayerUIController : MonoBehaviour
             }
             ShowSelectables(items);
         });
+    }
+
+    private IEnumerator FlashPlayerTagName(int playerIndex)
+    {
+        const float flashDuration = 1f;
+        const float moveDuration = 0.5f;
+        Vector2 flashTextPosition = new Vector2(Screen.width, Screen.height) / 2;
+        const float flashStartFontSize = 40f;
+        const float flashEndFontSize = 50f;
+
+        var flashOriginalFontSize = playerTags[playerIndex].PlayerNameText.fontSize;
+        var moveOriginalTextPosition = playerTags[playerIndex].PlayerNameText.transform.position;
+
+        playerTags[playerIndex].PlayerNameText.transform.position = flashTextPosition;
+        playerTags[playerIndex].PlayerNameText.fontSize = flashStartFontSize;
+
+        var timer = 0f;
+
+        while (timer < flashDuration)
+        {
+            playerTags[playerIndex].PlayerNameText.fontSize = Mathf.LerpUnclamped(flashStartFontSize, flashEndFontSize, playerTagFlashingCurve.Evaluate(timer / flashDuration));
+
+            timer += Time.deltaTime;
+            yield return 0;
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        StartCoroutine(MoveCoroutine());
+
+        yield return new WaitForSeconds(moveDuration / 3);
+
+        IEnumerator MoveCoroutine()
+        {
+            timer = 0f;
+            while (timer < moveDuration)
+            {
+                playerTags[playerIndex].PlayerNameText.fontSize = Mathf.LerpUnclamped(flashEndFontSize, flashOriginalFontSize, playerTagFlashingCurve.Evaluate(timer / moveDuration));
+                playerTags[playerIndex].PlayerNameText.transform.position = Vector3.LerpUnclamped(flashTextPosition, moveOriginalTextPosition, playerTagFlashingCurve.Evaluate(timer / moveDuration));
+
+                timer += Time.deltaTime;
+                yield return 0;
+            }
+
+            playerTags[playerIndex].PlayerNameText.fontSize = flashOriginalFontSize;
+            playerTags[playerIndex].PlayerNameText.transform.position = moveOriginalTextPosition;
+        }
     }
 
     public void ShowPathSelectionMenu(Transform[] fieldsToSelectFrom)
@@ -99,9 +154,9 @@ public class PlayerUIController : MonoBehaviour
         cardMenu.Open(selectables, () => { });
     }
 
-    public void ShowCards(IEnumerable<Card> cards, Action<CardObject> onClick, Action onClose = null)
+    public List<CardUI> ShowCards(IEnumerable<Card> cards, Action<CardUI> onClick, Action onClose = null)
     {
-        cardMenu.ShowCards(cardPrefab, cards, onClick, onClose);
+        return cardMenu.ShowCards(cardPrefab, cards, onClick, onClose);
     }
 
     public void HideSelectables()
@@ -117,15 +172,17 @@ public class PlayerUIController : MonoBehaviour
 
     public void SpawnPlayersTags(List<Piece> pieces)
     {
+        playerTags = new();
         for (int i = 0; i < pieces.Count; i++)
         {
             var item = Instantiate(playerTagPrefab, playersTagsTransform);
             item.transform.localPosition = new Vector3(SpaceAround(i, pieces.Count, playersTagsTransform.sizeDelta.x), playersTagsTransform.position.y);
             item.PieceToFollow = pieces[i];
+            playerTags.Add(item);
         }
     }
 
-    private IEnumerator UseBirdCard(CardObject cardUI)
+    private IEnumerator UseBirdCard(CardUI cardUI)
     {
         var birdCard = cardUI.Card as BirdCard;
 

@@ -232,7 +232,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2939868e61e544618994b80ae39f4e60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CardUI
+  scaleBy: 1.2
   text: {fileID: 6396406999846600711}
+  priceTagPrefab: {fileID: 4665034807798868578, guid: 1a0473642dac5474594b81eb0c3d41f3, type: 3}
 --- !u!114 &6068370250627047918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,3 +334,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb44087f342fc4b779f08572ada1e5f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloatUI
+  isEnabled: 1

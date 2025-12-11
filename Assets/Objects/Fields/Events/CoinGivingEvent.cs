@@ -10,12 +10,25 @@ public class CoinGivingEvent : FieldEvent
     public override IEnumerator Execute(PieceController pieceController, PlayerUIController playerUiController, LoadableSet[] loadableSets)
     {
         var dataSet = loadableSets.Single(x => x.name == "Coin Giving Loadable Set");
-
         var coinPrefab = dataSet.Collection[0] as GameObject;
+        yield return new WaitForSeconds(0.5f);
 
-        var coin = Object.Instantiate(coinPrefab).transform;
+        var coins = 10;
 
-        yield return MoveCoin(pieceController.Piece, coin);
+        for (int i = 0; i < coins; i++)
+        {
+            var coin = Object.Instantiate(coinPrefab).transform;
+
+            if (i == coins - 1)
+                yield return MoveCoin(pieceController.Piece, coin);
+            else
+            {
+                pieceController.Piece.StartCoroutine(MoveCoin(pieceController.Piece, coin));
+                yield return new WaitForSeconds(0.3f);
+            }
+        }
+
+        yield return new WaitForSeconds(0.5f);
     }
 
     private IEnumerator MoveCoin(Piece piece, Transform coin)
@@ -34,5 +47,9 @@ public class CoinGivingEvent : FieldEvent
             timer += Time.deltaTime;
             yield return 0;
         }
+
+        piece.Coins++;
+
+        Object.Destroy(coin.gameObject);
     }
 }

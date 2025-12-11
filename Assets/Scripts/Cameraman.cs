@@ -5,21 +5,19 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class Cameraman : MonoBehaviour
 {
+    private readonly float cameraZoomDuration = 2f;
+    private readonly float cameraMovementSpeed = 5f;
+    public const float FocusedOnPieceSize = 2;
+
     private static Cameraman instance;
 
     private Vector3 originalPosition;
     private Vector3 offset;
     private float originalSize;
-    public const float FocusedOnPieceSize = 2;
-
+    private Coroutine followingCoroutine;
     private new Camera camera;
 
-    public float cameraMovementDuration = 0.5f;
-    public float cameraMovementSpeed = 5f;
-
     public static Vector3 CurrentPosition => instance.transform.position;
-
-    private Coroutine followingCoroutine;
 
     private void Awake()
     {
@@ -44,9 +42,9 @@ public class Cameraman : MonoBehaviour
             var timer = 0f;
             var startSize = instance.camera.orthographicSize;
             var destinationSize = size;
-            while (timer <= instance.cameraMovementDuration)
+            while (timer <= instance.cameraZoomDuration)
             {
-                instance.camera.orthographicSize = Mathf.Lerp(startSize, destinationSize, timer / instance.cameraMovementDuration);
+                instance.camera.orthographicSize = Mathf.Lerp(startSize, destinationSize, timer / instance.cameraZoomDuration);
 
                 timer += Time.deltaTime;
                 yield return 0;
@@ -54,6 +52,12 @@ public class Cameraman : MonoBehaviour
 
             instance.camera.orthographicSize = destinationSize;
         }
+    }
+
+    public static void Reset()
+    {
+        Zoom(instance.originalSize);
+        Follow(() => instance.originalPosition);
     }
 
     public static void Follow(Func<Vector3> func)
