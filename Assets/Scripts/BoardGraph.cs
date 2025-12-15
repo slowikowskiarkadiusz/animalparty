@@ -56,7 +56,8 @@ public class BoardGraph : MonoBehaviour
         {"BC__BD", new CoinGivingEvent()},
     };
 
-    public Dictionary<string, FieldObject> FieldDictionary { get; } = new();
+    public ReadOnlyDictionary<string, FieldObject> FieldDictionary { get; private set; }
+    public ReadOnlyDictionary<string, List<string>> BidirectionalGraph { get; private set; }
     private ReadOnlyDictionary<string, List<Piece>> PiecesAtFields => new(Pieces.DistinctBy(x => x.Position).Select(x => new KeyValuePair<string, List<Piece>>(x.Position, Pieces.Where(y => y.Position == x.Position).ToList())).ToDictionary(x => x.Key, x => x.Value));
     public List<Piece> Pieces { get; } = new();
     public static int NumberOfPieces = -1;
@@ -70,14 +71,32 @@ public class BoardGraph : MonoBehaviour
 
     public void Init()
     {
+        Dictionary<string, FieldObject> fieldDictionary = new();
         for (int i = 0; i < fields.childCount; i++)
         {
             var child = fields.GetChild(i);
-            FieldDictionary[child.name] = child.GetComponent<FieldObject>();
+            fieldDictionary[child.name] = child.GetComponent<FieldObject>();
 
             if (fieldEvents.TryGetValue(child.name, out _))
                 child.GetComponentInChildren<MeshRenderer>().material = fieldEventMaterial;
         }
+        FieldDictionary = new(fieldDictionary);
+
+        Dictionary<string, List<string>> bidirectionalGraph = new();
+        foreach (var node in graph)
+        {
+            if (!bidirectionalGraph.TryGetValue(node.Key, out _))
+                bidirectionalGraph[node.Key] = new();
+            bidirectionalGraph[node.Key].AddRange(node.Value);
+
+            foreach (var neighbor in node.Value)
+            {
+                if (!bidirectionalGraph.TryGetValue(neighbor, out _))
+                    bidirectionalGraph[neighbor] = new();
+                bidirectionalGraph[neighbor].Add(node.Key);
+            }
+        }
+        BidirectionalGraph = new(bidirectionalGraph);
 
         foreach (KeyValuePair<string, FieldEvent> pair in interfieldEvents)
         {

@@ -69,7 +69,7 @@ public class BoardViewerUI : MonoBehaviour
 
             board.FieldDictionary[field].AnimateHighlight();
 
-            board.IsForkAheadOfPiece(field, out var fieldsAhead);
+            var neighbors = board.BidirectionalGraph[field].Select(x => board.FieldDictionary[x]).ToArray();
 
             var directions = new Vector3[]{
                 new (0, 0, 1),
@@ -80,10 +80,11 @@ public class BoardViewerUI : MonoBehaviour
 
             var diffs = new List<Vector3>();
 
-            foreach (var ahead in fieldsAhead)
+            foreach (var ahead in neighbors)
             {
                 var arrow = Instantiate(fieldArrowPrefab, board.transform);
-                arrow.transform.position = (ahead.transform.position + board.FieldDictionary[field].transform.position) / 2 + Vector3.up * 0.25f;
+                arrow.transform.position = (ahead.transform.position + board.FieldDictionary[field].transform.position) / 2 + Vector3.up * 0.1f;
+                arrow.transform.rotation = Quaternion.LookRotation(ahead.transform.position - arrow.transform.position);
                 arrow.Blink();
                 arrows.Add(arrow.gameObject);
 
@@ -96,7 +97,7 @@ public class BoardViewerUI : MonoBehaviour
             {
                 var minDistance = float.MaxValue;
                 var minIndex = -1;
-                for (int ii = 0; ii < fieldsAhead.Length; ii++)
+                for (int ii = 0; ii < neighbors.Length; ii++)
                 {
                     var distance = Vector3.Distance(diffs[ii], directions[i]);
                     if (distance < minDistance)
@@ -106,7 +107,7 @@ public class BoardViewerUI : MonoBehaviour
                     }
                 }
 
-                fieldsInDirections[i] = fieldsAhead[minIndex];
+                fieldsInDirections[i] = neighbors[minIndex];
             }
 
             Dictionary<UnityEngine.InputSystem.Controls.KeyControl, int> keyDictionary = new()
