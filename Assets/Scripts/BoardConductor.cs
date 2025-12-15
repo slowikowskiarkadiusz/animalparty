@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(BoardGraph))]
@@ -92,7 +93,7 @@ public class BoardConductor : MonoBehaviour
         {
             if (boardGraph.IsForkAheadOfPiece(playerId, out var fieldsAhead))
             {
-                playerUiController.ShowPathSelectionMenu(fieldsAhead);
+                playerUiController.ShowPathSelectionMenu(fieldsAhead.Select(x => x.transform).ToArray());
 
                 int? selectedPathIndex;
 

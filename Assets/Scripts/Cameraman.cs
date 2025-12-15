@@ -57,12 +57,11 @@ public class Cameraman : MonoBehaviour
         }
     }
 
-    public static void BeholdBoard()
+    public static void BeholdBoard(BoardGraph board)
     {
-        var board = FindObjectsByType<BoardGraph>(FindObjectsSortMode.None).Single();
         var bounds = new Bounds();
         foreach (var fieldPair in board.FieldDictionary)
-            bounds.Encapsulate(fieldPair.Value.bounds);
+            bounds.Encapsulate(fieldPair.Value.BoxCollider.bounds);
 
         Follow(() => bounds.center);
 

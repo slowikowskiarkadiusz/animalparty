@@ -56,7 +56,7 @@ public class BoardGraph : MonoBehaviour
         {"BC__BD", new CoinGivingEvent()},
     };
 
-    public Dictionary<string, BoxCollider> FieldDictionary { get; } = new();
+    public Dictionary<string, FieldObject> FieldDictionary { get; } = new();
     private ReadOnlyDictionary<string, List<Piece>> PiecesAtFields => new(Pieces.DistinctBy(x => x.Position).Select(x => new KeyValuePair<string, List<Piece>>(x.Position, Pieces.Where(y => y.Position == x.Position).ToList())).ToDictionary(x => x.Key, x => x.Value));
     public List<Piece> Pieces { get; } = new();
     public static int NumberOfPieces = -1;
@@ -73,7 +73,7 @@ public class BoardGraph : MonoBehaviour
         for (int i = 0; i < fields.childCount; i++)
         {
             var child = fields.GetChild(i);
-            FieldDictionary[child.name] = child.GetComponent<BoxCollider>();
+            FieldDictionary[child.name] = child.GetComponent<FieldObject>();
 
             if (fieldEvents.TryGetValue(child.name, out _))
                 child.GetComponentInChildren<MeshRenderer>().material = fieldEventMaterial;
@@ -165,7 +165,7 @@ public class BoardGraph : MonoBehaviour
         for (int i = 0; i < noOfPieces; i++)
         {
             var rad = 360 / noOfPieces * i * Mathf.Deg2Rad;
-            var collider = FieldDictionary[field];
+            var collider = FieldDictionary[field].BoxCollider;
             var x = collider.transform.position.x + collider.bounds.extents.x * Mathf.Cos(rad);
             var z = collider.transform.position.z + collider.bounds.extents.x * Mathf.Sin(rad);
             var y = collider.transform.position.y + collider.bounds.size.y;
@@ -189,10 +189,15 @@ public class BoardGraph : MonoBehaviour
         return graph.TryGetValue(field, out _);
     }
 
-    public bool IsForkAheadOfPiece(int pieceId, out Transform[] fieldsAhead)
+    public bool IsForkAheadOfPiece(int pieceId, out FieldObject[] fieldsAhead)
     {
-        var result = graph[Pieces[pieceId].Position].Skip(1).Any();
-        fieldsAhead = graph[Pieces[pieceId].Position].Select(x => FieldDictionary[x].transform).ToArray();
+        return IsForkAheadOfPiece(Pieces[pieceId].Position, out fieldsAhead);
+    }
+
+    public bool IsForkAheadOfPiece(string position, out FieldObject[] fieldsAhead)
+    {
+        var result = graph[position].Skip(1).Any();
+        fieldsAhead = graph[position].Select(x => FieldDictionary[x]).ToArray();
         return result;
     }
 }

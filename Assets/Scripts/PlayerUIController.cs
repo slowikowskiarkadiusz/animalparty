@@ -79,7 +79,7 @@ public class PlayerUIController : MonoBehaviour
             ShowSelectables(items, () => turnActionsMenu.gameObject.SetActive(true));
         });
 
-        boardViewerUI.WaitForZoomOutButton(() =>
+        boardViewerUI.WaitForZoomOutButton(pieceController, () =>
         {
             Cameraman.Zoom(Cameraman.FocusedOnPieceSize);
             Cameraman.Follow(() => pieceController.Piece.transform.position + Vector3.up * 1);
