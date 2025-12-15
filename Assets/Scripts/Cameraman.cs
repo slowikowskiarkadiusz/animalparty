@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
 public class Cameraman : MonoBehaviour
 {
-    private readonly float cameraZoomDuration = 2f;
+    private readonly float cameraZoomDuration = 1f;
     private readonly float cameraMovementSpeed = 5f;
     public const float FocusedOnPieceSize = 2;
 
@@ -16,6 +17,8 @@ public class Cameraman : MonoBehaviour
     private float originalSize;
     private Coroutine followingCoroutine;
     private new Camera camera;
+
+    public AnimationCurve zoomCurve;
 
     public static Vector3 CurrentPosition => instance.transform.position;
 
@@ -44,7 +47,7 @@ public class Cameraman : MonoBehaviour
             var destinationSize = size;
             while (timer <= instance.cameraZoomDuration)
             {
-                instance.camera.orthographicSize = Mathf.Lerp(startSize, destinationSize, timer / instance.cameraZoomDuration);
+                instance.camera.orthographicSize = Mathf.Lerp(startSize, destinationSize, instance.zoomCurve.Evaluate(timer / instance.cameraZoomDuration));
 
                 timer += Time.deltaTime;
                 yield return 0;
@@ -52,6 +55,20 @@ public class Cameraman : MonoBehaviour
 
             instance.camera.orthographicSize = destinationSize;
         }
+    }
+
+    public static void ZoomOut()
+    {
+        var board = FindObjectsByType<BoardGraph>(FindObjectsSortMode.None).Single();
+        var bounds = new Bounds();
+        foreach (var fieldPair in board.FieldDictionary)
+            bounds.Encapsulate(fieldPair.Value.bounds);
+
+        Follow(() => bounds.center);
+
+        var size = new float[] { bounds.extents.x / instance.camera.aspect, bounds.extents.y }.Max() * 1.1f;
+
+        Zoom(size);
     }
 
     public static void Reset()

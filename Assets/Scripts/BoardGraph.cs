@@ -33,11 +33,15 @@ public class BoardGraph : MonoBehaviour
         {"AS", new []{"AT"}},
         {"AT", new []{"AU"}},
         {"AU", new []{"AW"}},
-        {"AW", new []{"AX"}},
+        {"AW", new []{"AX", "BB"}},
         {"AX", new []{"AY"}},
         {"AY", new []{"AZ"}},
         {"AZ", new []{"BA"}},
         {"BA", new []{"AA"}},
+        {"BB", new []{"BC"}},
+        {"BC", new []{"BD"}},
+        {"BD", new []{"BE"}},
+        {"BE", new []{"AZ"}},
     };
 
     private readonly Dictionary<string, FieldEvent> fieldEvents = new()
@@ -49,9 +53,10 @@ public class BoardGraph : MonoBehaviour
         {"AO__AP", new VendorEventField()},
         {"AC__AD", new VendorEventField()},
         {"AA__AB", new CoinGivingEvent()},
+        {"BC__BD", new CoinGivingEvent()},
     };
 
-    private readonly Dictionary<string, BoxCollider> fieldDictionary = new();
+    public Dictionary<string, BoxCollider> FieldDictionary { get; } = new();
     private ReadOnlyDictionary<string, List<Piece>> PiecesAtFields => new(Pieces.DistinctBy(x => x.Position).Select(x => new KeyValuePair<string, List<Piece>>(x.Position, Pieces.Where(y => y.Position == x.Position).ToList())).ToDictionary(x => x.Key, x => x.Value));
     public List<Piece> Pieces { get; } = new();
     public static int NumberOfPieces = -1;
@@ -68,7 +73,7 @@ public class BoardGraph : MonoBehaviour
         for (int i = 0; i < fields.childCount; i++)
         {
             var child = fields.GetChild(i);
-            fieldDictionary[child.name] = child.GetComponent<BoxCollider>();
+            FieldDictionary[child.name] = child.GetComponent<BoxCollider>();
 
             if (fieldEvents.TryGetValue(child.name, out _))
                 child.GetComponentInChildren<MeshRenderer>().material = fieldEventMaterial;
@@ -77,8 +82,8 @@ public class BoardGraph : MonoBehaviour
         foreach (KeyValuePair<string, FieldEvent> pair in interfieldEvents)
         {
             var keys = pair.Key.Split("__");
-            var field1 = fieldDictionary[keys[0]];
-            var field2 = fieldDictionary[keys[1]];
+            var field1 = FieldDictionary[keys[0]];
+            var field2 = FieldDictionary[keys[1]];
 
             var exclamationPoint = Instantiate(exclamationPointPrefab, transform);
             exclamationPoint.transform.position = (field1.transform.position + field2.transform.position) / 2;
@@ -160,7 +165,7 @@ public class BoardGraph : MonoBehaviour
         for (int i = 0; i < noOfPieces; i++)
         {
             var rad = 360 / noOfPieces * i * Mathf.Deg2Rad;
-            var collider = fieldDictionary[field];
+            var collider = FieldDictionary[field];
             var x = collider.transform.position.x + collider.bounds.extents.x * Mathf.Cos(rad);
             var z = collider.transform.position.z + collider.bounds.extents.x * Mathf.Sin(rad);
             var y = collider.transform.position.y + collider.bounds.size.y;
@@ -187,7 +192,7 @@ public class BoardGraph : MonoBehaviour
     public bool IsForkAheadOfPiece(int pieceId, out Transform[] fieldsAhead)
     {
         var result = graph[Pieces[pieceId].Position].Skip(1).Any();
-        fieldsAhead = graph[Pieces[pieceId].Position].Select(x => fieldDictionary[x].transform).ToArray();
+        fieldsAhead = graph[Pieces[pieceId].Position].Select(x => FieldDictionary[x].transform).ToArray();
         return result;
     }
 }

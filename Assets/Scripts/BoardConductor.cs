@@ -9,9 +9,9 @@ public class BoardConductor : MonoBehaviour
     private readonly List<PlayerRegistration> playerRegistrations = new()
     {
         new("lysy", PieceType.Default),
-        new("seksovny", PieceType.Default),
-        new("theliver", PieceType.Default),
-        new("Domisia", PieceType.Default),
+        // new("seksovny", PieceType.Default),
+        // new("theliver", PieceType.Default),
+        // new("Domisia", PieceType.Default),
     };
 
     private readonly Color[] colors = new Color[]

@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(BoardViewerUI))]
 public class PlayerUIController : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI playerNumberText;
     [SerializeField] private RectTransform turnActionsMenu;
     [SerializeField] private Button rollDiceButton;
     [SerializeField] private Button pathSelectionButtonPrefab;
@@ -27,19 +28,25 @@ public class PlayerUIController : MonoBehaviour
     private PieceController currentPieceController;
     private (int id, SelectableItemUI selectable)? cardTargetPlayer;
     private List<PlayerTag> playerTags;
+    private BoardViewerUI boardViewerUI;
 
     private void Start()
     {
         mainCamera = Camera.main;
+        boardViewerUI = GetComponent<BoardViewerUI>();
     }
 
     public IEnumerator ConnectToPlayer(PieceController pieceController)
     {
+        StopAllCoroutines();
+
         rollDiceButton.onClick.RemoveAllListeners();
 
         Cameraman.Reset();
 
         yield return new WaitForSeconds(1);
+
+        turnActionsMenu.gameObject.SetActive(true);
 
         yield return FlashPlayerTagName(pieceController.Id);
 
@@ -47,10 +54,9 @@ public class PlayerUIController : MonoBehaviour
         Cameraman.Follow(() => pieceController.Piece.transform.position + Vector3.up * 1);
 
         currentPieceController = pieceController;
-        playerNumberText.text = $"Player {currentPieceController.Id}";
-        turnActionsMenu.gameObject.SetActive(true);
         rollDiceButton.onClick.AddListener(() =>
         {
+            turnActionsMenu.gameObject.SetActive(false);
             var items = new List<ChoosableDiceUI>();
             for (int i = 0; i < currentPieceController.Piece.Dices.Length; i++)
             {
@@ -59,6 +65,7 @@ public class PlayerUIController : MonoBehaviour
                 item.Dice = dice;
                 item.Button.onClick.AddListener(() =>
                 {
+                    turnActionsMenu.gameObject.SetActive(false);
                     HideSelectables();
                     currentPieceController.RollDice(dice);
 
@@ -68,7 +75,14 @@ public class PlayerUIController : MonoBehaviour
 
                 items.Add(item);
             }
-            ShowSelectables(items);
+
+            ShowSelectables(items, () => turnActionsMenu.gameObject.SetActive(true));
+        });
+
+        boardViewerUI.WaitForZoomOutButton(() =>
+        {
+            Cameraman.Zoom(Cameraman.FocusedOnPieceSize);
+            Cameraman.Follow(() => pieceController.Piece.transform.position + Vector3.up * 1);
         });
     }
 
@@ -149,9 +163,9 @@ public class PlayerUIController : MonoBehaviour
             HideSelectables();
     }
 
-    public void ShowSelectables(IEnumerable<SelectableItemUI> selectables)
+    public void ShowSelectables(IEnumerable<SelectableItemUI> selectables, Action onClose = null)
     {
-        cardMenu.Open(selectables, () => { });
+        cardMenu.Open(selectables, onClose);
     }
 
     public List<CardUI> ShowCards(IEnumerable<Card> cards, Action<CardUI> onClick, Action onClose = null)
