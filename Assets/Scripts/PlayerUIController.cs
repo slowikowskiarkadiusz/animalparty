@@ -106,7 +106,7 @@ public class PlayerUIController : MonoBehaviour
         {
             playerTags[playerIndex].PlayerNameText.fontSize = Mathf.LerpUnclamped(flashStartFontSize, flashEndFontSize, playerTagFlashingCurve.Evaluate(timer / flashDuration));
 
-            timer += Time.deltaTime;
+            timer += BoardTime.DeltaTime;
             yield return 0;
         }
 
@@ -124,7 +124,7 @@ public class PlayerUIController : MonoBehaviour
                 playerTags[playerIndex].PlayerNameText.fontSize = Mathf.LerpUnclamped(flashEndFontSize, flashOriginalFontSize, playerTagFlashingCurve.Evaluate(timer / moveDuration));
                 playerTags[playerIndex].PlayerNameText.transform.position = Vector3.LerpUnclamped(flashTextPosition, moveOriginalTextPosition, playerTagFlashingCurve.Evaluate(timer / moveDuration));
 
-                timer += Time.deltaTime;
+                timer += BoardTime.DeltaTime;
                 yield return 0;
             }
 

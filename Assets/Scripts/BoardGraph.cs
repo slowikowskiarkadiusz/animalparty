@@ -146,7 +146,7 @@ public class BoardGraph : MonoBehaviour
             Pieces[pieceId].transform.eulerAngles = new Vector3(0, 0, faceEuler.z);
             // Pieces[pieceId].transform.localEulerAngles += Vector3.right * -13;
 
-            timer += Time.deltaTime;
+            timer += BoardTime.DeltaTime;
             yield return 0;
         }
     }

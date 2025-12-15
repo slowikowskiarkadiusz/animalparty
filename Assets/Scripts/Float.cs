@@ -62,9 +62,9 @@ public class Float : MonoBehaviour
             var start = transform.position;
             while (timer < dirChangeTime)
             {
-                // transform.position = Vector3.Lerp(transform.position, destination, Time.deltaTime);
+                // transform.position = Vector3.Lerp(transform.position, destination, BoardTime.DeltaTime);
                 transform.position = Vector3.Lerp(start, destination, curve.Evaluate(timer / dirChangeTime));
-                timer += Time.deltaTime;
+                timer += BoardTime.DeltaTime;
                 yield return 0;
             }
             timer = 0f;

@@ -57,7 +57,7 @@ public class Cameraman : MonoBehaviour
         }
     }
 
-    public static void ZoomOut()
+    public static void BeholdBoard()
     {
         var board = FindObjectsByType<BoardGraph>(FindObjectsSortMode.None).Single();
         var bounds = new Bounds();

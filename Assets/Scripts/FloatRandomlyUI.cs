@@ -43,7 +43,7 @@ public class FloatRandomlyUI : MonoBehaviour
                 var aa = 1 - Math.Clamp(Vector3.Distance(originalPosition, transform.position) / MaxDistance, 0, 0.9f);
                 transform.position += direction * MoveSpeed * (isComingBack ? 1 : aa);
                 // transform.position = Vector3.Lerp(transform.position, destination, timer / duration);
-                timer += Time.deltaTime;
+                timer += BoardTime.DeltaTime;
                 yield return 0;
 
                 Distance = Vector3.Distance(originalPosition, transform.position);

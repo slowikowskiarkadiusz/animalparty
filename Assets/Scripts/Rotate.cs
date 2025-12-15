@@ -43,7 +43,7 @@ public class Rotate : MonoBehaviour
 
         do
         {
-            transform.Rotate(vector * rotationSpeed * Time.deltaTime);
+            transform.Rotate(vector * rotationSpeed * BoardTime.DeltaTime);
             yield return 0;
         } while (true);
     }

@@ -51,7 +51,7 @@ public class FrameResizer : MonoBehaviour
         while (timer < animationTime)
         {
             Resize(0, curve.Evaluate(timer / animationTime) * to);
-            timer += Time.deltaTime;
+            timer += BoardTime.DeltaTime;
             yield return 0;
         }
 
@@ -61,7 +61,7 @@ public class FrameResizer : MonoBehaviour
         while (timer < animationTime)
         {
             Resize(1, from + curve.Evaluate(timer / animationTime) * (to - from));
-            timer += Time.deltaTime;
+            timer += BoardTime.DeltaTime;
             yield return 0;
         }
 

@@ -53,11 +53,11 @@ public class DiceThrower : MonoBehaviour
 
             while (timer < duration)
             {
-                currentDiceObject.transform.position = Vector3.Lerp(currentDiceObject.transform.position, startPosition + yOffset * Vector3.up, Time.deltaTime);
+                currentDiceObject.transform.position = Vector3.Lerp(currentDiceObject.transform.position, startPosition + yOffset * Vector3.up, BoardTime.DeltaTime);
                 currentDiceObject.GenerateSingleSide(faceIndex);
                 currentDiceObject.transform.rotation = Quaternion.LookRotation(Cameraman.CurrentPosition - currentDiceObject.transform.position);
 
-                timer += Time.deltaTime;
+                timer += BoardTime.DeltaTime;
                 yield return 0;
             }
         }
@@ -78,7 +78,7 @@ public class DiceThrower : MonoBehaviour
             var step = timer / duration;
             var curve = show ? diceShowingSizeCurve : diceDisapearingSizeCurve;
             currentDiceObject.transform.localScale = curve.Evaluate(step) * originalScale;
-            timer += Time.deltaTime;
+            timer += BoardTime.DeltaTime;
             yield return 0;
         }
 

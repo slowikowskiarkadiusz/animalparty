@@ -16,10 +16,16 @@ public class BoardViewerUI : MonoBehaviour
             while (true)
             {
                 if (Keyboard.current.qKey.wasPressedThisFrame)
-                    Cameraman.ZoomOut();
+                {
+                    BoardTime.Modifier = 0;
+                    Cameraman.BeholdBoard();
+                }
 
-                if (Keyboard.current.eKey.wasPressedThisFrame)
+                if (Keyboard.current.qKey.wasReleasedThisFrame)
+                {
+                    BoardTime.Modifier = 1;
                     onLetGo();
+                }
 
                 yield return 0;
             }

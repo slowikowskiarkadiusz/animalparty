@@ -42,7 +42,7 @@ public class DiceObject : MonoBehaviour
         {
             while (true)
             {
-                rotateVector = Vector3.Lerp(rotateVector, randomizedRotateVector, rotateChangeSpeed * Time.deltaTime);
+                rotateVector = Vector3.Lerp(rotateVector, randomizedRotateVector, rotateChangeSpeed * BoardTime.DeltaTime);
                 yield return 0;
             }
         }
@@ -66,7 +66,7 @@ public class DiceObject : MonoBehaviour
         canRoll = true;
         while (canRoll)
         {
-            transform.Rotate(rotateVector * Time.deltaTime);
+            transform.Rotate(rotateVector * BoardTime.DeltaTime);
             yield return 0;
         }
     }

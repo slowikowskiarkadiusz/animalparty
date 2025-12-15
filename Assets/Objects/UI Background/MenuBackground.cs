@@ -104,7 +104,7 @@ public class MenuBackground : MonoBehaviour
         while (timer < animationTime)
         {
             Resize(0, curve.Evaluate(timer / animationTime) * to[0]);
-            timer += Time.deltaTime;
+            timer += BoardTime.DeltaTime;
             yield return 0;
         }
 
@@ -114,7 +114,7 @@ public class MenuBackground : MonoBehaviour
         while (timer < animationTime)
         {
             Resize(1, from[1] + curve.Evaluate(timer / animationTime) * (to[1] - from[1]));
-            timer += Time.deltaTime;
+            timer += BoardTime.DeltaTime;
             yield return 0;
         }
 

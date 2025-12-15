@@ -109,7 +109,7 @@ public class Piece : MonoBehaviour
 
                     yield return 0;
 
-                    timer += Time.deltaTime;
+                    timer += BoardTime.DeltaTime;
                 }
             }
 
@@ -120,11 +120,11 @@ public class Piece : MonoBehaviour
 
                 while (timer < duration)
                 {
-                    Rigidbody.MovePosition(Vector3.Lerp(Rigidbody.position, originalPosition, comingBackForce * Time.deltaTime));
+                    Rigidbody.MovePosition(Vector3.Lerp(Rigidbody.position, originalPosition, comingBackForce * BoardTime.DeltaTime));
 
                     yield return 0;
 
-                    timer += Time.deltaTime;
+                    timer += BoardTime.DeltaTime;
                 }
 
                 Rigidbody.isKinematic = originalIsKinematic;

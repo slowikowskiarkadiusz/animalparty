@@ -38,7 +38,7 @@ public class SelectableItemUI : MonoBehaviour
 
     private void Update()
     {
-        transform.localScale = Vector3.Lerp(transform.localScale, targetScale, scalingSpeed * Time.deltaTime);
+        transform.localScale = Vector3.Lerp(transform.localScale, targetScale, scalingSpeed * BoardTime.DeltaTime);
     }
 
     private void OnDestroy()
@@ -84,9 +84,9 @@ public class SelectableItemUI : MonoBehaviour
 
         while (timer < duration)
         {
-            RectTransform.position = Vector3.Lerp(RectTransform.position, startPosition + yOffset * Vector3.up, Time.deltaTime);
+            RectTransform.position = Vector3.Lerp(RectTransform.position, startPosition + yOffset * Vector3.up, BoardTime.DeltaTime);
 
-            timer += Time.deltaTime;
+            timer += BoardTime.DeltaTime;
             yield return 0;
         }
 

@@ -44,7 +44,7 @@ public class CoinGivingEvent : FieldEvent
         {
             coin.position = Vector3.Lerp(start, end, timer / duration) + movingCoinCurve.Evaluate(timer / duration) * movingCoinMaxHeight * Vector3.up;
 
-            timer += Time.deltaTime;
+            timer += BoardTime.DeltaTime;
             yield return 0;
         }
 
