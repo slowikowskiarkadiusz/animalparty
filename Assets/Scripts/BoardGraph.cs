@@ -50,14 +50,51 @@ public class BoardGraph : MonoBehaviour
 
     private readonly Dictionary<string, FieldEvent> interfieldEvents = new()
     {
-        {"AO__AP", new VendorEventField()},
-        {"AC__AD", new VendorEventField()},
-        {"AA__AB", new CoinGivingEvent()},
-        {"BC__BD", new CoinGivingEvent()},
+        {"AO-AP", new VendorEventField()},
+        {"AC-AD", new VendorEventField()},
+        {"AA-AB", new CoinGivingEvent()},
+        {"BC-BD", new CoinGivingEvent()},
     };
 
-    public ReadOnlyDictionary<string, FieldObject> FieldDictionary { get; private set; }
-    public ReadOnlyDictionary<string, List<string>> BidirectionalGraph { get; private set; }
+    private Dictionary<string, Transform> interfieldEventsDictionary = new();
+
+    private ReadOnlyDictionary<string, FieldObject> fieldDictionary { get; set; }
+    public ReadOnlyDictionary<string, List<string>> BidirectionalGraph
+    {
+        get
+        {
+            Dictionary<string, List<string>> bidirectionalGraph = new();
+            foreach (var node in graph)
+            {
+                if (!bidirectionalGraph.TryGetValue(node.Key, out _))
+                    bidirectionalGraph[node.Key] = new();
+                bidirectionalGraph[node.Key].AddRange(node.Value);
+
+                foreach (var neighbor in node.Value)
+                {
+                    if (!bidirectionalGraph.TryGetValue(neighbor, out _))
+                        bidirectionalGraph[neighbor] = new();
+                    bidirectionalGraph[neighbor].Add(node.Key);
+                }
+            }
+
+            foreach (var node in interfieldEventsDictionary)
+            {
+                if (!bidirectionalGraph.TryGetValue(node.Key, out _))
+                    bidirectionalGraph[node.Key] = new();
+                var split = node.Key.Split("-");
+                var from = split[0];
+                var to = split[1];
+                bidirectionalGraph[node.Key].AddRange(split);
+                bidirectionalGraph[from].Remove(to);
+                bidirectionalGraph[from].Add(node.Key);
+                bidirectionalGraph[to].Remove(from);
+                bidirectionalGraph[to].Add(node.Key);
+            }
+
+            return new(bidirectionalGraph);
+        }
+    }
     private ReadOnlyDictionary<string, List<Piece>> PiecesAtFields => new(Pieces.DistinctBy(x => x.Position).Select(x => new KeyValuePair<string, List<Piece>>(x.Position, Pieces.Where(y => y.Position == x.Position).ToList())).ToDictionary(x => x.Key, x => x.Value));
     public List<Piece> Pieces { get; } = new();
     public static int NumberOfPieces = -1;
@@ -80,34 +117,48 @@ public class BoardGraph : MonoBehaviour
             if (fieldEvents.TryGetValue(child.name, out _))
                 child.GetComponentInChildren<MeshRenderer>().material = fieldEventMaterial;
         }
-        FieldDictionary = new(fieldDictionary);
-
-        Dictionary<string, List<string>> bidirectionalGraph = new();
-        foreach (var node in graph)
-        {
-            if (!bidirectionalGraph.TryGetValue(node.Key, out _))
-                bidirectionalGraph[node.Key] = new();
-            bidirectionalGraph[node.Key].AddRange(node.Value);
-
-            foreach (var neighbor in node.Value)
-            {
-                if (!bidirectionalGraph.TryGetValue(neighbor, out _))
-                    bidirectionalGraph[neighbor] = new();
-                bidirectionalGraph[neighbor].Add(node.Key);
-            }
-        }
-        BidirectionalGraph = new(bidirectionalGraph);
+        this.fieldDictionary = new(fieldDictionary);
 
         foreach (KeyValuePair<string, FieldEvent> pair in interfieldEvents)
         {
-            var keys = pair.Key.Split("__");
-            var field1 = FieldDictionary[keys[0]];
-            var field2 = FieldDictionary[keys[1]];
+            var keys = pair.Key.Split("-");
+            var field1 = this.fieldDictionary[keys[0]];
+            var field2 = this.fieldDictionary[keys[1]];
 
             var exclamationPoint = Instantiate(exclamationPointPrefab, transform);
             exclamationPoint.transform.position = (field1.transform.position + field2.transform.position) / 2;
             exclamationPoint.transform.position = exclamationPoint.transform.position + Vector3.up * exclamationPoint.MaxDistance / 2;
+
+            interfieldEventsDictionary[pair.Key] = exclamationPoint.transform;
         }
+    }
+
+    public FieldObject GetFieldObject(string name)
+    {
+        return fieldDictionary.TryGetValue(name, out var value) ? value : null;
+    }
+
+    public Transform GetObject(string name)
+    {
+        var fieldObject = GetFieldObject(name);
+        if (fieldObject != null)
+            return fieldObject.transform;
+
+        var interfieldObject = interfieldEventsDictionary.TryGetValue(name, out var value) ? value : null;
+        if (interfieldObject != null)
+            return interfieldObject;
+
+        return null;
+    }
+
+    public IEnumerable<FieldObject> GetAllFieldObjects()
+    {
+        return fieldDictionary.Select(x => x.Value);
+    }
+
+    public IEnumerable<Transform> GetAllObjects()
+    {
+        return GetAllFieldObjects().Select(x => x.transform).Concat(interfieldEventsDictionary.Select(x => x.Value));
     }
 
     public void MovePieceInstantlyTo(Piece piece, string field)
@@ -129,7 +180,7 @@ public class BoardGraph : MonoBehaviour
 
     public IEnumerator MovePieceForward(int pieceId, int selectedPath, PieceController pieceController, PlayerUIController playerUiController)
     {
-        var haveRunInterfieldEvent = interfieldEvents.TryGetValue($"{Pieces[pieceId].Position}__{graph[Pieces[pieceId].Position][selectedPath]}", out var interfieldEvent);
+        var haveRunInterfieldEvent = interfieldEvents.TryGetValue($"{Pieces[pieceId].Position}-{graph[Pieces[pieceId].Position][selectedPath]}", out var interfieldEvent);
         var field = graph[Pieces[pieceId].Position][selectedPath];
         Pieces[pieceId].Position = field;
         var positions = GetPiecesLocalPositionsAtField(field);
@@ -184,7 +235,7 @@ public class BoardGraph : MonoBehaviour
         for (int i = 0; i < noOfPieces; i++)
         {
             var rad = 360 / noOfPieces * i * Mathf.Deg2Rad;
-            var collider = FieldDictionary[field].BoxCollider;
+            var collider = fieldDictionary[field].BoxCollider;
             var x = collider.transform.position.x + collider.bounds.extents.x * Mathf.Cos(rad);
             var z = collider.transform.position.z + collider.bounds.extents.x * Mathf.Sin(rad);
             var y = collider.transform.position.y + collider.bounds.size.y;
@@ -216,7 +267,7 @@ public class BoardGraph : MonoBehaviour
     public bool IsForkAheadOfPiece(string position, out FieldObject[] fieldsAhead)
     {
         var result = graph[position].Skip(1).Any();
-        fieldsAhead = graph[position].Select(x => FieldDictionary[x]).ToArray();
+        fieldsAhead = graph[position].Select(x => fieldDictionary[x]).ToArray();
         return result;
     }
 }

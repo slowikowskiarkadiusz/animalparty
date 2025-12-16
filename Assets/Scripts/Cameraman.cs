@@ -60,8 +60,8 @@ public class Cameraman : MonoBehaviour
     public static void BeholdBoard(BoardGraph board)
     {
         var bounds = new Bounds();
-        foreach (var fieldPair in board.FieldDictionary)
-            bounds.Encapsulate(fieldPair.Value.BoxCollider.bounds);
+        foreach (var field in board.GetAllFieldObjects())
+            bounds.Encapsulate(field.BoxCollider.bounds);
 
         Follow(() => bounds.center);
 
