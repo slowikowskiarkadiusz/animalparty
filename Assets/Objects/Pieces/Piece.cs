@@ -133,11 +133,11 @@ public class Piece : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            Kick(2);
-        }
-    }
+    // private void Update()
+    // {
+    //     if (Keyboard.current.spaceKey.wasPressedThisFrame)
+    //     {
+    //         Kick(2);
+    //     }
+    // }
 }

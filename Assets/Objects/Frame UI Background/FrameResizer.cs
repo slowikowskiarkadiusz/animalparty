@@ -6,16 +6,21 @@ using UnityEngine;
 
 public class FrameResizer : MonoBehaviour
 {
-    private List<MeshFilter> meshFilters;
+    protected List<MeshFilter> meshFilters;
     private List<Vector3[]> originalVertices;
-    [Range(-300, 300)][SerializeField] private float to;
+    // [Range(-300, 300)][SerializeField] private float to;
     [SerializeField] private AnimationCurve curve;
     [SerializeField] private float animationTime = 1;
-    [SerializeField] private bool isRunAnimation = false;
+    // [SerializeField] private bool isRunAnimation = false;
 
     private Vector3 initialDiff = Vector3.zero;
 
-    private void Awake()
+    void Awake()
+    {
+        Init();
+    }
+
+    protected void Init()
     {
         meshFilters = GetComponentsInChildren<MeshFilter>().ToList();
         originalVertices = meshFilters.Select(meshFilter => new Vector3[meshFilter.sharedMesh.vertices.Length]).ToList();
@@ -30,57 +35,60 @@ public class FrameResizer : MonoBehaviour
                 originalVertices[i][ii] = meshFilter.sharedMesh.vertices[ii];
         }
 
-        initialDiff = new Vector3(originalVertices.SelectMany(x => x).Select(x => Mathf.Abs(x[0])).Max(),
-            originalVertices.SelectMany(x => x).Select(x => Mathf.Abs(x[1])).Max(),
-            originalVertices.SelectMany(x => x).Select(x => Mathf.Abs(x[2])).Max());
+        initialDiff = new Vector3(originalVertices.SelectMany(x => x).Max(x => Mathf.Abs(x[0])),
+            originalVertices.SelectMany(x => x).Max(x => Mathf.Abs(x[1])),
+            originalVertices.SelectMany(x => x).Max(x => Mathf.Abs(x[2])));
 
-        Debug.Log(initialDiff.ToString("F8"));
-
-        Resize(0, 0);
-        Resize(1, 0);
+        SnapResize(0, 0);
+        SnapResize(1, 0);
     }
 
-    private IEnumerator Animation()
+    protected IEnumerator ResizeCoroutine(Vector2 from, Vector2 to)
     {
         var timer = 0f;
 
-        Resize(1, to / 2f);
+        SnapResize(0, from.x);
+        SnapResize(1, from.y);
 
         yield return 0;
 
-        while (timer < animationTime)
+        if (from.x != to.x)
         {
-            Resize(0, curve.Evaluate(timer / animationTime) * to);
-            timer += BoardTime.DeltaTime;
-            yield return 0;
+            while (timer < animationTime)
+            {
+                SnapResize(0, from.x + curve.Evaluate(timer / animationTime) * (to.x - from.x));
+                timer += BoardTime.DeltaTime;
+                yield return 0;
+            }
         }
 
-        timer = 0f;
-        var from = to / 2f;
-
-        while (timer < animationTime)
+        if (from.y != to.y)
         {
-            Resize(1, from + curve.Evaluate(timer / animationTime) * (to - from));
-            timer += BoardTime.DeltaTime;
-            yield return 0;
-        }
+            timer = 0f;
 
-        Resize(1, to);
-    }
+            while (timer < animationTime)
+            {
+                SnapResize(1, from.y + curve.Evaluate(timer / animationTime) * (to.y - from.y));
+                timer += BoardTime.DeltaTime;
+                yield return 0;
+            }
 
-    private void Update()
-    {
-        if (isRunAnimation)
-        {
-            StartCoroutine(Animation());
-            isRunAnimation = false;
+            SnapResize(1, to.y);
         }
     }
 
-    public void Resize(int axis, float to)
-    {
-        to /= 1000f;
+    // private void Update()
+    // {
+    //     if (isRunAnimation)
+    //     {
+    //         StartCoroutine(Animation());
+    //         isRunAnimation = false;
+    //     }
+    // }
 
+    public void SnapResize(int axis, float to)
+    {
+        to /= 2;
         for (int h = 0; h < meshFilters.Count; h++)
         {
             var meshFilter = meshFilters[h];
@@ -88,17 +96,16 @@ public class FrameResizer : MonoBehaviour
             for (int i = 0; i < meshFilter.sharedMesh.vertices.Length; i++)
                 if (originalVertices[h][i][axis] != 0)
                 {
-                    var vector = meshFilter.sharedMesh.vertices[i];
-                    vector[axis] = originalVertices[h][i][axis];
-                    var sign = (vector[axis] > 0) ? 1 : -1;
-                    vector[axis] += sign * (to - initialDiff[axis]);
-                    newVertices[i] = vector;
+                    var position = meshFilter.sharedMesh.vertices[i];
+                    var sign = (originalVertices[h][i][axis] > 0) ? 1 : -1;
+                    position[axis] = originalVertices[h][i][axis] + sign * (to - initialDiff[axis]);
+                    newVertices[i] = position;
 
                     var newSign = (newVertices[i][axis] > 0) ? 1 : -1;
                     if (sign != newSign)
                     {
-                        vector[axis] = 0;
-                        newVertices[i] = vector;
+                        position[axis] = 0;
+                        newVertices[i] = position;
                     }
                 }
                 else

@@ -21,6 +21,7 @@ public class Cameraman : MonoBehaviour
     public AnimationCurve zoomCurve;
 
     public static Vector3 CurrentPosition => instance.transform.position;
+    public static Camera Camera => instance.camera;
 
     private void Awake()
     {

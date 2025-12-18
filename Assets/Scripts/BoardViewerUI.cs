@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,10 +10,15 @@ public class BoardViewerUI : MonoBehaviour
 {
     [SerializeField] private FieldArrowObject fieldArrowPrefab;
     [SerializeField] private HighlightFrameObject highlightFramePrefab;
+    [SerializeField] private RectTransform boardViewingTransform;
+    [SerializeField] private RectTransform awayPrefab;
+    [SerializeField] private float awayOffset = 10;
+    // [SerializeField] private RectTransform descriptionPrefab;
 
     private BoardGraph board;
     private List<GameObject> arrows = new();
     private HighlightFrameObject highlightFrame;
+    private RectTransform awayLabel;
     private Coroutine navigateCoroutine;
 
     public void WaitForZoomOutButton(PieceController pieceController, Action onPressed, Action onReleased)
@@ -55,6 +61,9 @@ public class BoardViewerUI : MonoBehaviour
 
     private void CleanAfterNavigateCoroutine()
     {
+        if (awayLabel)
+            Destroy(awayLabel.gameObject);
+
         if (highlightFrame)
             Destroy(highlightFrame.gameObject);
 
@@ -71,6 +80,14 @@ public class BoardViewerUI : MonoBehaviour
         while (true)
         {
             CleanAfterNavigateCoroutine();
+
+            if (pieceController.Piece.Position != field)
+            {
+                awayLabel = Instantiate(awayPrefab, boardViewingTransform);
+                awayLabel.position = Cameraman.Camera.WorldToScreenPoint(board.GetObject(field).position) - Vector3.up * Screen.height * awayOffset;
+                var (distance, isReachable) = board.GetDistance(pieceController.Piece.Position, field);
+                awayLabel.GetComponentInChildren<TextMeshProUGUI>().text = $"{distance.ToString()} away";
+            }
 
             highlightFrame = Instantiate(highlightFramePrefab);
             highlightFrame.transform.position = board.GetObject(field).transform.position;
@@ -94,7 +111,7 @@ public class BoardViewerUI : MonoBehaviour
                 arrow.Blink();
                 arrows.Add(arrow.gameObject);
 
-                var diff = Camera.main.WorldToScreenPoint(ahead.Item1.transform.position) - Camera.main.WorldToScreenPoint(board.GetObject(field).transform.position);
+                var diff = Cameraman.Camera.WorldToScreenPoint(ahead.Item1.transform.position) - Cameraman.Camera.WorldToScreenPoint(board.GetObject(field).transform.position);
                 diffs.Add(diff.normalized);
             }
 

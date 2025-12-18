@@ -270,4 +270,32 @@ public class BoardGraph : MonoBehaviour
         fieldsAhead = graph[position].Select(x => fieldDictionary[x]).ToArray();
         return result;
     }
+
+    public (int distance, bool isReachable) GetDistance(string position, string target)
+    {
+        var split = target.Split("-");
+
+        return (BFS(position, split[0]) + split.Length - 1, true);
+    }
+
+    private int BFS(string original, string target)
+    {
+        var queue = new Queue<(string node, int count)>();
+        queue.Enqueue((original, 0));
+
+        while (queue.Any())
+        {
+            var current = queue.Dequeue();
+
+            foreach (var branch in graph[current.node])
+            {
+                queue.Enqueue((branch, current.count + 1));
+            }
+
+            if (current.node == target)
+                return current.count;
+        }
+
+        return -1;
+    }
 }
