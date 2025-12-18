@@ -7,8 +7,15 @@ public class VendorEventField : FieldEvent
     private List<Card> offer = new() { TotemCard.PerpetualVelocity, TotemCard.PerpetualVelocity, TotemCard.PerpetualVelocity, TotemCard.PerpetualVelocity };
     private bool canYield = false;
 
-    public override IEnumerator Execute(PieceController pieceController, PlayerUIController playerUiController, LoadableSet[] loadableSets)
+    public VendorEventField(int index) : base(index) { }
+
+    public override IEnumerator Execute(PieceController pieceController, PlayerUIController playerUiController, FieldEventDataSet[] fieldEventDataSets)
     {
+        var dataSet = GetDataSet<VendorFieldEventDataSet>(fieldEventDataSets, FieldEventType.VendorFieldEvent);
+
+        yield return TalkingUI.ShowAsCoroutine(dataSet.ShopActor, "I'm a working shop!");
+        Cameraman.Follow(pieceController.Piece.transform);
+
         var cardsUI = playerUiController.ShowCards(offer, card =>
                 {
                     playerUiController.StartCoroutine(OnCardSelected(card, pieceController, playerUiController));

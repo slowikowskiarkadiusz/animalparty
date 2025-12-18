@@ -7,23 +7,25 @@ public class CoinGivingEvent : FieldEvent
     private readonly AnimationCurve movingCoinCurve = new(new Keyframe[] { new(0, 0, 2, 4), new(0.5f, 1, 0, 0), new(1, 0, -4, 0), });
     private readonly float movingCoinMaxHeight = 1;
 
-    public override IEnumerator Execute(PieceController pieceController, PlayerUIController playerUiController, LoadableSet[] loadableSets)
+    public CoinGivingEvent(int index) : base(index) { }
+
+    public override IEnumerator Execute(PieceController pieceController, PlayerUIController playerUiController, FieldEventDataSet[] fieldEventDataSets)
     {
-        var dataSet = loadableSets.Single(x => x.name == "Coin Giving Loadable Set");
-        var coinPrefab = dataSet.Collection[0] as GameObject;
+        var dataSet = GetDataSet<CoinGivingEventDataSet>(fieldEventDataSets, FieldEventType.CoinGivingEvent);
+
         yield return new WaitForSeconds(0.5f);
 
         var coins = 10;
 
         for (int i = 0; i < coins; i++)
         {
-            var coin = Object.Instantiate(coinPrefab).transform;
+            var coin = Object.Instantiate(dataSet.CoinPrefab).transform;
 
             if (i == coins - 1)
-                yield return MoveCoin(pieceController.Piece, coin);
+                yield return MoveCoin(pieceController.Piece, coin, dataSet.CoinGiverActor);
             else
             {
-                pieceController.Piece.StartCoroutine(MoveCoin(pieceController.Piece, coin));
+                pieceController.Piece.StartCoroutine(MoveCoin(pieceController.Piece, coin, dataSet.CoinGiverActor));
                 yield return new WaitForSeconds(0.3f);
             }
         }
@@ -31,9 +33,8 @@ public class CoinGivingEvent : FieldEvent
         yield return new WaitForSeconds(0.5f);
     }
 
-    private IEnumerator MoveCoin(Piece piece, Transform coin)
+    private IEnumerator MoveCoin(Piece piece, Transform coin, Transform coinGiver)
     {
-        var coinGiver = GameObject.Find("Coin Giver").transform;
         var timer = 0f;
         var duration = 1f;
         var start = coinGiver.position;

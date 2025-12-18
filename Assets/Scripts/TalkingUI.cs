@@ -17,13 +17,13 @@ public class TalkingUI : MonoBehaviour
 
     public static void Show(Transform actor, string text, Action then)
     {
-        instance.StartCoroutine(Coroutine());
+        instance.StartCoroutine(ShowAsCoroutine(actor, text, then));
+    }
 
-        IEnumerator Coroutine()
-        {
-            var bubble = Instantiate(instance.bubblePrefab, instance.bubbleParent);
-            yield return bubble.Run(actor.position + bubble.Size.y * 1.2f * Vector3.up, text);
-            then();
-        }
+    public static IEnumerator ShowAsCoroutine(Transform actor, string text, Action then = null)
+    {
+        var bubble = Instantiate(instance.bubblePrefab, instance.bubbleParent);
+        Cameraman.Follow(() => (actor.position + bubble.transform.position) / 2);
+        yield return bubble.Run(actor.position + bubble.Size.y * 1.2f * Vector3.up, text);
     }
 }

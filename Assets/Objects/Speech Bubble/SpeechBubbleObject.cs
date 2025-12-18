@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class SpeechBubbleObject : FrameResizer
 {
-    public readonly Vector2 Size = new Vector2(3, 2);
+    public readonly Vector2 Size = new Vector2(4f, 1.8f);
     [SerializeField] private TextMeshProUGUI textMesh;
     private Vector2 startSize = new Vector2(0, 2);
     private float letterInterval = 0.01f;
@@ -51,6 +51,7 @@ public class SpeechBubbleObject : FrameResizer
 
         IEnumerator Blink()
         {
+            yield return new WaitForSeconds(blinkInterval);
             var isOn = true;
             while (true)
             {

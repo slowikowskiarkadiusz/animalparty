@@ -91,6 +91,16 @@ public class Cameraman : MonoBehaviour
         instance.followingCoroutine = instance.StartCoroutine(instance.FollowTransformCoroutine(t));
     }
 
+    // public static void LeanTowards(Func<Vector3> func)
+    // {
+    // }
+
+    // public static void LeanTowards(Transform t)
+    // {
+    //         instance.StopCoroutine(instance.followingCoroutine);
+    //     instance.followingCoroutine = instance.StartCoroutine(instance.FollowTransformCoroutine(t));
+    // }
+
     private IEnumerator FollowVector3Coroutine(Func<Vector3> func)
     {
         while (true)

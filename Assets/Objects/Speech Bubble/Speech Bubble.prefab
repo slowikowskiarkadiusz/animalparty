@@ -79,7 +79,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  animationTime: 0.2
+  animationTime: 0.5
   textMesh: {fileID: 3100243552363837544}
 --- !u!1 &7274007696248672707
 GameObject:
@@ -107,7 +107,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 583864461024321717}
@@ -209,8 +209,8 @@ MonoBehaviour:
   m_fontSizeBase: 0.2
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 0.2
-  m_fontSizeMax: 0.2
+  m_fontSizeMin: 0.15
+  m_fontSizeMax: 0.15
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
