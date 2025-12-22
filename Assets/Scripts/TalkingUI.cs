@@ -24,6 +24,6 @@ public class TalkingUI : MonoBehaviour
     {
         var bubble = Instantiate(instance.bubblePrefab, instance.bubbleParent);
         Cameraman.Follow(() => (actor.position + bubble.transform.position) / 2);
-        yield return bubble.Run(actor.position + bubble.Size.y * 1.2f * Vector3.up, text);
+        yield return bubble.Run(actor.position + bubble.Size.y * 0.8f * Vector3.up, text);
     }
 }

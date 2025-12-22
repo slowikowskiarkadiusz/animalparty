@@ -80,6 +80,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   animationTime: 0.5
+  toX: 0.01
+  toY: 0.01
+  isRunAnimation: 0
   textMesh: {fileID: 3100243552363837544}
 --- !u!1 &7274007696248672707
 GameObject:

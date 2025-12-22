@@ -3,12 +3,14 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class SpeechBubbleObject : FrameResizer
 {
-    public readonly Vector2 Size = new Vector2(4f, 1.8f);
+    // public readonly Vector2 Size = new Vector2(4f, 1.8f);
+    public readonly Vector2 Size = new Vector2(4f, 2f);
     [SerializeField] private TextMeshProUGUI textMesh;
-    private Vector2 startSize = new Vector2(0, 2);
+    private Vector2 startSize = new Vector2(0, 1);
     private float letterInterval = 0.01f;
     private float blinkInterval = 0.4f;
     private MeshRenderer[] meshRenderers;

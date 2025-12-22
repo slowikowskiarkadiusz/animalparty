@@ -13,7 +13,8 @@ public class CoinGivingEvent : FieldEvent
     {
         var dataSet = GetDataSet<CoinGivingEventDataSet>(fieldEventDataSets, FieldEventType.CoinGivingEvent);
 
-        yield return new WaitForSeconds(0.5f);
+        yield return TalkingUI.ShowAsCoroutine(dataSet.CoinGiverActor, "Hello there, Toubled Traveler! Please receive this humble gift, may it help you along the way...");
+        Cameraman.Follow(pieceController.Piece.transform);
 
         var coins = 10;
 

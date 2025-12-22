@@ -8,10 +8,8 @@ public class FrameResizer : MonoBehaviour
 {
     protected List<MeshFilter> meshFilters;
     private List<Vector3[]> originalVertices;
-    // [Range(-300, 300)][SerializeField] private float to;
     [SerializeField] private AnimationCurve curve;
     [SerializeField] private float animationTime = 1;
-    // [SerializeField] private bool isRunAnimation = false;
 
     private Vector3 initialDiff = Vector3.zero;
 
@@ -41,6 +39,9 @@ public class FrameResizer : MonoBehaviour
 
         SnapResize(0, 0);
         SnapResize(1, 0);
+
+        toX = initialDiff[0];
+        toY = initialDiff[1];
     }
 
     protected IEnumerator ResizeCoroutine(Vector2 from, Vector2 to)
@@ -77,18 +78,20 @@ public class FrameResizer : MonoBehaviour
         }
     }
 
+    [Range(0.01f, 4)][SerializeField] private float toX;
+    [Range(0.01f, 4)][SerializeField] private float toY;
+    [SerializeField] private bool isRunAnimation = false;
+
     // private void Update()
     // {
-    //     if (isRunAnimation)
-    //     {
-    //         StartCoroutine(Animation());
-    //         isRunAnimation = false;
-    //     }
+    //     SnapResize(0, toX);
+    //     SnapResize(1, toY);
     // }
 
     public void SnapResize(int axis, float to)
     {
         to /= 2;
+
         for (int h = 0; h < meshFilters.Count; h++)
         {
             var meshFilter = meshFilters[h];
@@ -98,7 +101,12 @@ public class FrameResizer : MonoBehaviour
                 {
                     var position = meshFilter.sharedMesh.vertices[i];
                     var sign = (originalVertices[h][i][axis] > 0) ? 1 : -1;
-                    position[axis] = originalVertices[h][i][axis] + sign * (to - initialDiff[axis]);
+
+                    if (to >= initialDiff[axis])
+                        position[axis] = originalVertices[h][i][axis] + sign * (to - initialDiff[axis]);
+                    else
+                        position[axis] = originalVertices[h][i][axis] * to / initialDiff[axis];
+
                     newVertices[i] = position;
 
                     var newSign = (newVertices[i][axis] > 0) ? 1 : -1;
