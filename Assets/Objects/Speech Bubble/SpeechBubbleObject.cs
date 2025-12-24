@@ -19,7 +19,6 @@ public class SpeechBubbleObject : FrameResizer
     private MeshRenderer[] meshRenderers;
     private Color[] originalColors;
 
-
     void Awake()
     {
         Init();
