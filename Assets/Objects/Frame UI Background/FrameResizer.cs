@@ -37,8 +37,8 @@ public class FrameResizer : MonoBehaviour
             originalVertices.SelectMany(x => x).Max(x => Mathf.Abs(x[1])),
             originalVertices.SelectMany(x => x).Max(x => Mathf.Abs(x[2])));
 
-        SnapResize(0, 0);
-        SnapResize(1, 0);
+        SnapResize(0, Vector2.zero);
+        SnapResize(1, Vector2.zero);
 
         toX = initialDiff[0];
         toY = initialDiff[1];
@@ -48,8 +48,8 @@ public class FrameResizer : MonoBehaviour
     {
         var timer = 0f;
 
-        SnapResize(0, from.x);
-        SnapResize(1, from.y);
+        SnapResize(0, from);
+        SnapResize(1, from);
 
         yield return 0;
 
@@ -57,7 +57,7 @@ public class FrameResizer : MonoBehaviour
         {
             while (timer < animationTime)
             {
-                SnapResize(0, from.x + curve.Evaluate(timer / animationTime) * (to.x - from.x));
+                SnapResize(0, from + curve.Evaluate(timer / animationTime) * (to - from));
                 timer += BoardTime.DeltaTime;
                 yield return 0;
             }
@@ -69,12 +69,12 @@ public class FrameResizer : MonoBehaviour
 
             while (timer < animationTime)
             {
-                SnapResize(1, from.y + curve.Evaluate(timer / animationTime) * (to.y - from.y));
+                SnapResize(1, from + curve.Evaluate(timer / animationTime) * (to - from));
                 timer += BoardTime.DeltaTime;
                 yield return 0;
             }
 
-            SnapResize(1, to.y);
+            SnapResize(1, to);
         }
     }
 
@@ -82,15 +82,23 @@ public class FrameResizer : MonoBehaviour
     [Range(0.01f, 4)][SerializeField] private float toY;
     [SerializeField] private bool isRunAnimation = false;
 
-    // private void Update()
-    // {
-    //     SnapResize(0, toX);
-    //     SnapResize(1, toY);
-    // }
-
-    public void SnapResize(int axis, float to)
+    private void Update()
     {
-        to /= 2;
+        if (isRunAnimation)
+        {
+            var to = new Vector2(toX, toY);
+            SnapResize(0, to);
+            SnapResize(1, to);
+            isRunAnimation = false;
+        }
+    }
+
+    public void SnapResize(int axis, Vector2 to)
+    {
+        to[axis] /= 2;
+
+        var otherAxis = axis == 0 ? 1 : 0;
+        var toDiff = Math.Abs(to.x - to.y);
 
         for (int h = 0; h < meshFilters.Count; h++)
         {
@@ -102,10 +110,19 @@ public class FrameResizer : MonoBehaviour
                     var position = meshFilter.sharedMesh.vertices[i];
                     var sign = (originalVertices[h][i][axis] > 0) ? 1 : -1;
 
-                    if (to >= initialDiff[axis])
-                        position[axis] = originalVertices[h][i][axis] + sign * (to - initialDiff[axis]);
+                    // if (to[axis] >= initialDiff[axis])
+                    //     position[axis] = originalVertices[h][i][axis] + sign * (to[axis] - initialDiff[axis]);
+                    // else
+                    //     position[axis] = originalVertices[h][i][axis] * to[axis] / initialDiff[axis];
+
+                    if (to[otherAxis] < initialDiff[otherAxis])
+                    {
+                        position[axis] = originalVertices[h][i][axis] * to[otherAxis] / initialDiff[otherAxis] + toDiff * sign;
+                    }
+                    else if (to[axis] < initialDiff[axis])
+                        position[axis] = originalVertices[h][i][axis] * to[axis] / initialDiff[axis];
                     else
-                        position[axis] = originalVertices[h][i][axis] * to / initialDiff[axis];
+                        position[axis] = originalVertices[h][i][axis] + sign * (to[axis] - initialDiff[axis]);
 
                     newVertices[i] = position;
 

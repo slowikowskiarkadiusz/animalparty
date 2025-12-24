@@ -50,6 +50,7 @@ public class BoardGraph : MonoBehaviour
 
     private readonly Dictionary<string, FieldEvent> interfieldEvents = new()
     {
+        {"AA-AB", new CoinGivingEvent(2)},
         {"AC-AD", new VendorEventField(0)},
         {"AO-AP", new VendorEventField(1)},
         {"AE-AF", new CoinGivingEvent(2)},

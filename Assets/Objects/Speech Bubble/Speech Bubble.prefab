@@ -83,6 +83,33 @@ MonoBehaviour:
   toX: 0.01
   toY: 0.01
   isRunAnimation: 0
+  buttonResizeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.009216648
+      outSlope: -0.009216648
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.5
+      outWeight: 0.51666665
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.004645761
+      outSlope: -0.004645761
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.5125
+      outWeight: 0.5
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  buttonResizeInterval: 1
+  buttonResizeMax: 1.2
+  buttonResizeColor: {r: 0, g: 1, b: 0.025922537, a: 1}
   textMesh: {fileID: 3100243552363837544}
 --- !u!1 &7274007696248672707
 GameObject:
@@ -270,7 +297,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f89ba9f4a324c483a92cb94b5056dbd9, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 0.0001
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f89ba9f4a324c483a92cb94b5056dbd9, type: 3}
       propertyPath: m_LocalPosition.x

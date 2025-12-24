@@ -19,6 +19,7 @@ public class FieldArrowObject : MonoBehaviour
             var isFlipped = false;
             while (true)
             {
+                isFlipped = false;
                 var timer = 0f;
                 while (timer < hightlightDuration)
                 {
