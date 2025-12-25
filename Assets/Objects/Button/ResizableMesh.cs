@@ -4,26 +4,29 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-[ExecuteAlways]
+[ExecuteInEditMode]
 public class ResizableMesh : MonoBehaviour
 {
-    [Range(0.0001f, 5)][SerializeField] private float x;
-    [Range(0.0001f, 5)][SerializeField] private float y;
-    [Range(0.0001f, 5)][SerializeField] private float z;
+    [Range(0.0001f, 5)][SerializeField] private float x = 1;
+    [Range(0.0001f, 5)][SerializeField] private float y = 1;
+    [Range(0.0001f, 5)][SerializeField] private float z = 1;
+    protected Vector3 Size => new(x, y, z);
     [SerializeField] private bool isRunInEditor;
 
-    protected List<MeshFilter> meshFilters;
+    [SerializeField] protected List<MeshFilter> meshFilters;
     protected List<Vector3[]> originalVertices;
     protected Vector3? initialDiff;
 
     void Awake()
     {
-        Preinit();
+        if (Application.isPlaying)
+            Preinit();
     }
 
     protected void Preinit()
     {
-        meshFilters = GetComponents<MeshFilter>().ToList();
+        if (meshFilters.Count == 0)
+            meshFilters = GetComponentsInChildren<MeshFilter>().ToList();
 
         if (originalVertices == null)
         {
@@ -64,7 +67,17 @@ public class ResizableMesh : MonoBehaviour
 
     public void SnapResize(int axis, Vector3 to)
     {
+        Preinit();
+
         SnapResize(axis, to, meshFilters, originalVertices, initialDiff.Value);
+    }
+
+    public void SnapResize(Vector3 to)
+    {
+        Preinit();
+
+        for (int axis = 0; axis < 3; axis++)
+            SnapResize(axis, to, meshFilters, originalVertices, initialDiff.Value);
     }
 
     public static void SnapResize(int axis,

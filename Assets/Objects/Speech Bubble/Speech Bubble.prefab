@@ -46,6 +46,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 778056ae1c46746ecadc9c4b4407b099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpeechBubbleResizer
+  x: 1
+  y: 1
+  z: 1
+  isRunInEditor: 0
+  meshFilters:
+  - {fileID: 4590740558181003024}
   curve:
     serializedVersion: 2
     m_Curve:
@@ -80,9 +86,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   animationTime: 0.5
-  toX: 0.01
-  toY: 0.01
-  isRunAnimation: 0
   buttonResizeCurve:
     serializedVersion: 2
     m_Curve:
@@ -343,6 +346,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 0df21cd4f59e14a9e9fb323afae09641, type: 2}
+    - target: {fileID: -5754084199372789682, guid: f89ba9f4a324c483a92cb94b5056dbd9, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f89ba9f4a324c483a92cb94b5056dbd9, type: 3}
       propertyPath: m_Name
       value: Model
@@ -359,5 +366,10 @@ PrefabInstance:
 --- !u!4 &583864461024321717 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f89ba9f4a324c483a92cb94b5056dbd9, type: 3}
+  m_PrefabInstance: {fileID: 1121665546818488158}
+  m_PrefabAsset: {fileID: 0}
+--- !u!33 &4590740558181003024 stripped
+MeshFilter:
+  m_CorrespondingSourceObject: {fileID: -5754084199372789682, guid: f89ba9f4a324c483a92cb94b5056dbd9, type: 3}
   m_PrefabInstance: {fileID: 1121665546818488158}
   m_PrefabAsset: {fileID: 0}
